@@ -218,7 +218,7 @@ public:
 	void set_title() {
 		//Set the window title bar.
 		XMapWindow(dpy, win);
-		XStoreName(dpy, win, "Asteroids template");
+		XStoreName(dpy, win, "Defenders of Space");
 	}
 	void check_resize(XEvent *e) {
 		//The ConfigureNotify is sent by the
@@ -542,16 +542,16 @@ void physics()
 	g.ship.pos[1] += g.ship.vel[1];
 	//Check for collision with window edges
 	if (g.ship.pos[0] < 0.0) {
-		g.ship.pos[0] += (float)gl.xres;
+		g.ship.pos[0] = 0.0;
 	}
 	else if (g.ship.pos[0] > (float)gl.xres) {
-		g.ship.pos[0] -= (float)gl.xres;
+		g.ship.pos[0] = (float)gl.xres;
 	}
 	else if (g.ship.pos[1] < 0.0) {
-		g.ship.pos[1] += (float)gl.yres;
+		g.ship.pos[1] = 0.0;
 	}
 	else if (g.ship.pos[1] > (float)gl.yres) {
-		g.ship.pos[1] -= (float)gl.yres;
+		g.ship.pos[1] = (float)gl.yres;
 	}
 	//
 	//Update bullet positions
@@ -575,16 +575,21 @@ void physics()
 		b->pos[1] += b->vel[1];
 		//Check for collision with window edges
 		if (b->pos[0] < 0.0) {
-			b->pos[0] += (float)gl.xres;
+			//delete the bullet...
+			memcpy(&g.barr[i], &g.barr[g.nbullets-1], sizeof(Bullet));
+			g.nbullets--;
 		}
 		else if (b->pos[0] > (float)gl.xres) {
-			b->pos[0] -= (float)gl.xres;
+			memcpy(&g.barr[i], &g.barr[g.nbullets-1], sizeof(Bullet));
+			g.nbullets--;
 		}
 		else if (b->pos[1] < 0.0) {
-			b->pos[1] += (float)gl.yres;
+			memcpy(&g.barr[i], &g.barr[g.nbullets-1], sizeof(Bullet));
+			g.nbullets--;
 		}
 		else if (b->pos[1] > (float)gl.yres) {
-			b->pos[1] -= (float)gl.yres;
+			memcpy(&g.barr[i], &g.barr[g.nbullets-1], sizeof(Bullet));
+			g.nbullets--;
 		}
 		i++;
 	}
@@ -747,7 +752,8 @@ void render()
 	r.bot = gl.yres - 20;
 	r.left = 10;
 	r.center = 0;
-	ggprint8b(&r, 16, 0x00ff0000, "3350 - Asteroids");
+	ggprint8b(&r, 16, 0x00ff0000, "Defenders of Space");
+	ggprint8b(&r, 16, 0x00ffff00, "n distance: %i", g.nasteroids);
 	ggprint8b(&r, 16, 0x00ffff00, "n bullets: %i", g.nbullets);
 	ggprint8b(&r, 16, 0x00ffff00, "n asteroids: %i", g.nasteroids);
 	ggprint8b(&r, 16, 0x00ffff00, "n asteroids destroyed: ");
