@@ -10,7 +10,7 @@ if (gl.keys[XK_p]) {
                  struct timespec bt;
                  clock_gettime(CLOCK_REALTIME, &bt);
                  double ts = timeDiff(&g.bulletTimer, &bt);
-                 if (ts > 0.2) {
+                 if (ts > 0.00005) {
                          timeCopy(&g.bulletTimer, &bt);
                          if (g.nbullets < MAX_BULLETS) {
                                  //shoot a bullet...
