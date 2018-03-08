@@ -17,6 +17,11 @@ using namespace std;
 #include <GL/glx.h>
 #include "log.h"
 #include "fonts.h"
+#include <ctime>
+
+extern double timeDiff(struct timespec *start, struct timespec *end);
+extern void timeCopy(struct timespec *dest, struct timespec *source);
+double testFunc();
 
 using namespace std;
 /*class Image {
@@ -48,7 +53,7 @@ fclose(fpi);
 unlink("asteroid.ppm");
 }} img; */
 /*
-void circle(*a){      
+void circle(){      
 
     Asteroid *a = g.ahead;
     int i;
@@ -68,3 +73,43 @@ void circle(*a){
     }
 }*/
 
+void showNamekasean(int a, int b)
+{
+    static double Time = 0.0;
+    struct timespec ftimeStart, ftimeEnd;
+    clock_gettime(CLOCK_REALTIME, &ftimeStart);
+    Time += timeDiff(&ftimeStart, &ftimeEnd);
+    Rect r;
+    r.bot = b - 200;
+    r.left = 18;
+    r.center = 0;
+    //ggprint8b(&r, 24, 0x00ffdd00, "Function time %lf", Time);
+    ggprint8b(&r, 24, 0x00ffdd00, "Function time %lf", testFunc());
+    clock_gettime(CLOCK_REALTIME, &ftimeEnd);
+
+}
+
+double testFunc()
+{
+    static double Time = 0.0;
+    struct timespec ftimeStart, ftimeEnd;
+    int i = 100000;
+    clock_gettime(CLOCK_REALTIME, &ftimeStart);
+    //for (int i = 0; i <= 100000; i++)
+    while (i != 100000)
+    {
+	float x = 200.0;
+	float y = 300.0;
+	float z = 400.0;
+	x = y * 3 / 3 + x / 3 - y / 3 * z * 100 / 2.2;
+       	y = int(x) % 15 - int(y) % 14 - int(z) % 13;
+
+	x += 0.2;
+	y += 0.2;
+	z += 0.2;
+    }
+
+    clock_gettime(CLOCK_REALTIME, &ftimeEnd);
+    Time += timeDiff(&ftimeStart, &ftimeEnd);
+    return Time;
+}
