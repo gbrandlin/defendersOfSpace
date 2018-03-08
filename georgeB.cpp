@@ -11,7 +11,7 @@ using namespace std;
 
 extern double timeDiff(struct timespec *start,struct timespec *end);
 extern void timeCopy(struct timespec *dest, struct timespec *source);
-double testFunc();
+double testFunc2();
 
 
 void bulletsound(){
@@ -71,11 +71,11 @@ void showNameGeorge(int x ,int y)
     clock_gettime(CLOCK_REALTIME,&ftimeEnd);
     t += timeDiff(&ftimeStart, &ftimeEnd);
     ggprint8b(&r,24,0x00ffff00,"function 1 time: %lf",t);
-    ggprint8b(&r,24,0x00ffff00,"function 2 time: %lf", testFunc());
+    ggprint8b(&r,24,0x00ffff00,"function 2 time: %lf", testFunc2());
    
     }
 
-double testFunc()
+double testFunc2()
 {
     static double t = 0.0;
     struct timespec ftimeStart,ftimeEnd;

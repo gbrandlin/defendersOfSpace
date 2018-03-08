@@ -540,19 +540,11 @@ void physics()
 	//Update ship position
 	g.ship.pos[0] += g.ship.vel[0];
 	g.ship.pos[1] += g.ship.vel[1];
-	//Check for collision with window edges
-	if (g.ship.pos[0] < 0.0) {
-		g.ship.pos[0] = 0.0;
-	}
-	else if (g.ship.pos[0] > (float)gl.xres) {
-		g.ship.pos[0] = (float)gl.xres;
-	}
-	else if (g.ship.pos[1] < 0.0) {
-		g.ship.pos[1] = 0.0;
-	}
-	else if (g.ship.pos[1] > (float)gl.yres) {
-		g.ship.pos[1] = (float)gl.yres;
-	}
+	//Check for ship collision with window edges
+	extern double ship_xboundary (double);
+	g.ship.pos[0] = ship_xboundary(g.ship.pos[0]);
+	extern double ship_yboundary (double);
+	g.ship.pos[1] = ship_yboundary(g.ship.pos[1]);
 	//
 	//Update bullet positions
 	struct timespec bt;
@@ -758,6 +750,14 @@ void render()
 	ggprint8b(&r, 16, 0x00ffff00, "n asteroids: %i", g.nasteroids);
 	ggprint8b(&r, 16, 0x00ffff00, "n asteroids destroyed: ");
 	//
+	extern void showNameKyle(int, int);
+	showNameKyle(gl.xres, gl.yres);
+	extern void showNameGeorge(int, int);
+	showNameGeorge(100, 400);
+	extern void PowerUp(int, int);
+	PowerUp(600, 600);
+	extern void showNamekasean(int, int);
+	showNamekasean(100, 600);
 	//-------------
 	//Draw the ship
 	glColor3fv(g.ship.color);
