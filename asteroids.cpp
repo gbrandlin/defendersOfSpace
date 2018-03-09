@@ -4,7 +4,7 @@
 //Title : Defenders of Space
 //program: asteroids.cpp
 //frame work by Gordon Grisel
-// Authors: George,Kasean,Kyle,Henri
+// Authors: George, Kasean, Kyle, "Heri" not "HENRI" >_<
 //date:    2014 - 2018
 //mod spring 2015: added constructors
 //mod spring 2018: X11 wrapper class
@@ -758,6 +758,8 @@ void render()
 	PowerUp(600, 600);
 	extern void showNamekasean(int, int);
 	showNamekasean(100, 600);
+	extern void showNameHeri(int, int);
+	showNameHeri(100, 500);
 	//-------------
 	//Draw the ship
 	glColor3fv(g.ship.color);
