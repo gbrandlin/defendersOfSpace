@@ -1,5 +1,5 @@
 // Author: Kyle Gregory
-// Date-modified: 3/8/18
+// Date-modified: 3/21/18
 
 #include "fonts.h"
 #include "GL/glx.h"
@@ -76,29 +76,20 @@ double ship_yboundary (double y) {
 // Bullet modification
 
 // Check/delete for collision with window edge x.res
-/*double bullet_xboundary (double x) {
+/*double bullet_boundary (double x, double y, int b) {
 	if (x < 0.0) {
-		memcpy(&g.barr[i], &g.barr[g.nbullets-1], sizeof(Bullet));
-		g.nbullets--;
+		b--;
 	}
 	else if (x > 1250.0) {
-		memcpy(&g.barr[i], &g.barr[g.nbullets-1], sizeof(Bullet));
-		g.nbullets--;
+		b--;
 	}
-	return x;
-}
-
-// Check/delete for collision with window edge y.res
-double bullet_yboundary (double y) {
-	if (y < 0.0) {
-		memcpy(&g.barr[i], &g.barr[g.nbullets-1], sizeof(Bullet));
-		g.nbullets--;
+	else if (y < 0.0) {
+		b--;
 	}
 	else if (y > 900.0) {
-		memcpy(&g.barr[i], &g.barr[g.nbullets-1], sizeof(Bullet));
-		g.nbullets--;
+		b--;
 	}
-	return y;
+	return b;
 }*/
 //-----------------------------------------------------------------------------
 
