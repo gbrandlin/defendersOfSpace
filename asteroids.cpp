@@ -46,7 +46,7 @@ const float TIMESLICE = 1.0f;
 const float GRAVITY = -0.2f;
 #define PI 3.141592653589793
 #define ALPHA 1
-const int MAX_BULLETS = 11;
+const int MAX_BULLETS = 20;
 const Flt MINIMUM_ASTEROID_SIZE = 60.0;
 
 //-----------------------------------------------------------------------------
@@ -381,7 +381,7 @@ void check_mouse(XEvent *e)
 					b->vel[0] = g.ship.vel[0];
 					b->vel[1] = g.ship.vel[1];
 					//convert ship angle to radians
-					Flt rad = ((g.ship.angle+90.0) / 360.0f) * PI * 2.0;
+					Flt rad = ((g.ship.angle) / 360.0f) * PI * 2.0;
 					//convert angle to a vector
 					Flt xdir = cos(rad);
 					Flt ydir = sin(rad);
@@ -422,7 +422,7 @@ void check_mouse(XEvent *e)
 				//mouse moved along the y-axis.
 				//apply thrust
 				//convert ship angle to radians
-				Flt rad = ((g.ship.angle+90.0) / 360.0f) * PI * 2.0;
+				Flt rad = ((g.ship.angle) / 360.0f) * PI * 2.0;
 				//convert angle to a vector
 				Flt xdir = cos(rad);
 				Flt ydir = sin(rad);
@@ -554,7 +554,7 @@ void physics()
 		Bullet *b = &g.barr[i];
 		//How long has bullet been alive?
 		double ts = timeDiff(&b->time, &bt);
-		if (ts > 2.5) {
+		if (ts > 5.0) {
 			//time to delete the bullet.
 			memcpy(&g.barr[i], &g.barr[g.nbullets-1],
 				sizeof(Bullet));
@@ -565,6 +565,10 @@ void physics()
 		//move the bullet
 		b->pos[0] += b->vel[0];
 		b->pos[1] += b->vel[1];
+		/*
+		b->pos[0] += b->vel[0];
+		b->pos[1] += b->vel[1];
+		*/
 		//Check for collision with window edges
 		if (b->pos[0] < 0.0) {
 			//delete the bullet...
@@ -671,14 +675,17 @@ void physics()
 		//convert ship angle to radians
 		Flt rad = ((g.ship.angle+180.0) / 360.0f) * PI * 2.0;
 		//convert angle to a vector
+		if (g.ship.vel[0] > 0) {
+			g.ship.vel[0] = 0;
+		}
 		Flt xdir = cos(rad);
 		Flt ydir = sin(rad);
-		g.ship.vel[0] += xdir*0.02f;
-		g.ship.vel[1] += ydir*0.02f;
+		g.ship.vel[0] += xdir*0.05f;
+		g.ship.vel[1] += ydir*0.05f;
 		Flt speed = sqrt(g.ship.vel[0]*g.ship.vel[0]+
 				g.ship.vel[1]*g.ship.vel[1]);
-		if (speed > 10.0f) {
-			speed = 10.0f;
+		if (speed > 5.0f) {
+			speed = 5.0f;
 			normalize2d(g.ship.vel);
 			g.ship.vel[0] *= speed;
 			g.ship.vel[1] *= speed;
@@ -689,14 +696,17 @@ void physics()
 		//convert ship angle to radians
 		Flt rad = ((g.ship.angle+0.0) / 360.0f) * PI * 2.0;
 		//convert angle to a vector
+		if (g.ship.vel[0] < 0) {
+			g.ship.vel[0] = 0;
+		}
 		Flt xdir = cos(rad);
 		Flt ydir = sin(rad);
-		g.ship.vel[0] += xdir*0.02f;
-		g.ship.vel[1] += ydir*0.02f;
+		g.ship.vel[0] += xdir*0.05f;
+		g.ship.vel[1] += ydir*0.05f;
 		Flt speed = sqrt(g.ship.vel[0]*g.ship.vel[0]+
 				g.ship.vel[1]*g.ship.vel[1]);
-		if (speed > 10.0f) {
-			speed = 10.0f;
+		if (speed > 5.0f) {
+			speed = 5.0f;
 			normalize2d(g.ship.vel);
 			g.ship.vel[0] *= speed;
 			g.ship.vel[1] *= speed;
@@ -707,14 +717,17 @@ void physics()
 		//convert ship angle to radians
 		Flt rad = ((g.ship.angle+90.0) / 360.0f) * PI * 2.0;
 		//convert angle to a vector
+		if (g.ship.vel[1] < 0) {
+			g.ship.vel[1] = 0;
+		}
 		Flt xdir = cos(rad);
 		Flt ydir = sin(rad);
-		g.ship.vel[0] += xdir*0.02f;
-		g.ship.vel[1] += ydir*0.02f;
+		g.ship.vel[0] += xdir*0.05f;
+		g.ship.vel[1] += ydir*0.05f;
 		Flt speed = sqrt(g.ship.vel[0]*g.ship.vel[0]+
 				g.ship.vel[1]*g.ship.vel[1]);
-		if (speed > 10.0f) {
-			speed = 10.0f;
+		if (speed > 5.0f) {
+			speed = 5.0f;
 			normalize2d(g.ship.vel);
 			g.ship.vel[0] *= speed;
 			g.ship.vel[1] *= speed;
@@ -725,14 +738,17 @@ void physics()
 		//convert ship angle to radians
 		Flt rad = ((g.ship.angle+270.0) / 360.0f) * PI * 2.0;
 		//convert angle to a vector
+		if (g.ship.vel[1] > 0) {
+			g.ship.vel[1] = 0;
+		}
 		Flt xdir = cos(rad);
 		Flt ydir = sin(rad);
-		g.ship.vel[0] += xdir*0.02f;
-		g.ship.vel[1] += ydir*0.02f;
+		g.ship.vel[0] += xdir*0.05f;
+		g.ship.vel[1] += ydir*0.05f;
 		Flt speed = sqrt(g.ship.vel[0]*g.ship.vel[0]+
 				g.ship.vel[1]*g.ship.vel[1]);
-		if (speed > 10.0f) {
-			speed = 10.0f;
+		if (speed > 5.0f) {
+			speed = 5.0f;
 			normalize2d(g.ship.vel);
 			g.ship.vel[0] *= speed;
 			g.ship.vel[1] *= speed;
@@ -755,7 +771,9 @@ void physics()
 				b->vel[0] = g.ship.vel[0];
 				b->vel[1] = g.ship.vel[1];
 				//convert ship angle to radians
-				Flt rad = ((g.ship.angle+90.0) / 360.0f) * PI * 2.0;
+	//////////////////////////// add this change to code //////////////////////	
+				Flt rad = ((g.ship.angle) / 360.0f) * PI * 2.0;
+	//////////////////////////// add this change to code //////////////////////	
 				//convert angle to a vector
 				Flt xdir = cos(rad);
 				Flt ydir = sin(rad);
@@ -809,7 +827,9 @@ void render()
 	glColor3fv(g.ship.color);
 	glPushMatrix();
 	glTranslatef(g.ship.pos[0], g.ship.pos[1], g.ship.pos[2]);
-	glRotatef(g.ship.angle, 0.0f, 0.0f, 1.0f);
+	//////////////////////////// add this change to code //////////////////////	
+	glRotatef(g.ship.angle-90.0f, 0.0f, 0.0f, 1.0f);
+	//////////////////////////// add this change to code //////////////////////	
 	glBegin(GL_TRIANGLES);
 		glVertex2f(-12.0f, -10.0f);
 		glVertex2f(  0.0f, 20.0f);
@@ -823,10 +843,13 @@ void render()
 		glVertex2f(0.0f, 0.0f);
 	glEnd();
 	glPopMatrix();
-	if (gl.keys[XK_Up] || g.mouseThrustOn) {
+	//if (gl.keys[XK_Right] || g.mouseThrustOn) {
+	//////////////////////////// add this change to code //////////////////////
+	if (gl.keys[XK_Right]) {
+	//////////////////////////// add this change to code //////////////////////	
 		int i;
 		//draw thrust
-		Flt rad = ((g.ship.angle+90.0) / 360.0f) * PI * 2.0;
+		Flt rad = ((g.ship.angle) / 360.0f) * PI * 2.0;
 		//convert angle to a vector
 		Flt xdir = cos(rad);
 		Flt ydir = sin(rad);
