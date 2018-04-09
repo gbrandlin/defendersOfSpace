@@ -174,13 +174,13 @@ class Asteroid {
 	}
 };
 
-
+/*
 public:
 float matrix[2][2];
 Global() {
     srand((unsigned)time(NULL));
 }
-
+*/
 
 
 
