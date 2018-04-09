@@ -754,6 +754,7 @@ void physics()
     }
     //---------------------------------------------------
     //check keys pressed now
+    
     if (gl.keys[XK_Left]) {
 	//apply thrust
 	//convert ship angle to radians
@@ -837,7 +838,12 @@ void physics()
 	    g.ship.vel[0] *= speed;
 	    g.ship.vel[1] *= speed;
 	}
-    }	
+    }
+/*
+Heri's code
+	extern void shipMovement();
+	shipMovement();
+*/
     if (gl.keys[XK_space]) {
 	//a little time between each bullet
 	struct timespec bt;
