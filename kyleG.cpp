@@ -1,9 +1,13 @@
 // Author: Kyle Gregory
-// Date-modified: 3/21/18
+// Date-modified: 4/20/18
+// Purpose: Modifies parts of the ship and displays scores through html file.
 
 #include "fonts.h"
 #include "GL/glx.h"
 #include <ctime>
+#include <fstream>
+#include <iostream>
+using namespace std;
 
 //-----------------------------------------------------------------------------
 // Setup timers
@@ -15,35 +19,56 @@ double testTime();
 
 // Print name and time functions
 void showNameKyle(int x, int y) {
-    static double timer = 0.0;
-    struct timespec ftimeStart, ftimeEnd;
-    clock_gettime(CLOCK_REALTIME, &ftimeStart);
-    Rect r;
-    r.bot = y-800;
-    r.left = 10;
-    r.center = 0;
-    ggprint8b(&r, 16, 0x00ffff00, "kyle");
-    clock_gettime(CLOCK_REALTIME, &ftimeEnd);
-    timer += timeDiff(&ftimeStart, &ftimeEnd);
-    ggprint8b(&r, 16, 0x00ffdd00, "function 1 time: %lf", timer);
-    ggprint8b(&r, 16, 0x00ffdd00, "function 2 time: %lf", testTime());
+    	static double timer = 0.0;
+    	struct timespec ftimeStart, ftimeEnd;
+    	clock_gettime(CLOCK_REALTIME, &ftimeStart);
+    	Rect r;
+    	r.bot = y-800;
+    	r.left = 10;
+    	r.center = 0;
+    	ggprint8b(&r, 16, 0x00ffff00, "kyle");
+    	clock_gettime(CLOCK_REALTIME, &ftimeEnd);
+    	timer += timeDiff(&ftimeStart, &ftimeEnd);
+    	ggprint8b(&r, 16, 0x00ffdd00, "function 1 time: %lf", timer);
+    	ggprint8b(&r, 16, 0x00ffdd00, "function 2 time: %lf", testTime());
 }
 
 double testTime() {
-    static double timer = 0.0;
-    struct timespec ftimeStart, ftimeEnd;
-    clock_gettime(CLOCK_REALTIME, &ftimeStart);
-    int i = 200000;
-    while (i != 200000) {
-	int j = 100, k = 200;
-	j = j * 2000 * k * 1000;
-	k = (k-500) & (j-800); 
-	i++;
-    }
-    clock_gettime(CLOCK_REALTIME, &ftimeEnd);
-    timer += timeDiff(&ftimeStart, &ftimeEnd);
-    return timer;
+    	static double timer = 0.0;
+    	struct timespec ftimeStart, ftimeEnd;
+    	clock_gettime(CLOCK_REALTIME, &ftimeStart);
+    	int i = 200000;
+    	while (i != 200000) {
+		int j = 100, k = 200;
+		j = j * 2000 * k * 1000;
+		k = (k-500) & (j-800); 
+		i++;
+    	}
+    	clock_gettime(CLOCK_REALTIME, &ftimeEnd);
+    	timer += timeDiff(&ftimeStart, &ftimeEnd);
+    	return timer;
 }
+
+//-----------------------------------------------------------------------------
+// Scoreboard Creation
+
+void createScores (int scores) {
+    ofstream fout("scoreBoard.html");
+    if (fout.is_open()) {
+	fout << "<!DOCTYPE html>" << endl;
+	fout << "<html>" << endl;
+	fout << "<head>" << endl;
+	fout << "<title>Defenders Of Space</title>" << endl;
+	fout << "</head>" << endl;
+	fout << "<body>" << endl;
+	fout << "<h1>High Scores</h1>" << endl;
+	fout << scores << endl;
+	fout << "</body>" << endl;
+	fout << "</html>" << endl;
+    }
+    fout.close();
+}
+//-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 // SHIP modification
