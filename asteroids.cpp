@@ -25,6 +25,7 @@ using namespace std;
 #include <GL/glx.h>
 #include "log.h"
 #include "fonts.h"
+#include <stdio.h>
 
 //defined types
 typedef float Flt;
@@ -56,8 +57,7 @@ extern struct timespec timeStart, timeCurrent;
 extern double timeDiff(struct timespec *start, struct timespec *end);
 extern void timeCopy(struct timespec *dest, struct timespec *source);
 //-----------------------------------------------------------------------------
-//Kasean's code please dont touch!
-/*
+
 class Image {
     public:
 	int width, height;
@@ -112,8 +112,9 @@ class Image {
 	}
 };
 Image img[1] = {
-    "asteriods.jpeg"};
-*/
+    "asteroid.jpeg"
+    //"meteroid.jpg"
+    };
 
 class Global {
     public:
@@ -173,7 +174,26 @@ class Asteroid {
 	    next = NULL;
 	}
 };
-
+/*
+class PowerUp {
+    public:
+	Vec pos;
+	Vec vel;
+	int nverts;
+	Flt radius;
+	Vec vert[8];
+	float angle;
+	float rotate;
+	float color[3];
+	struct PowerUp *prev;
+	struct PowerUp *next;
+    public:
+	PowerUp() {
+	    prev = NULL;
+	    next = NULL;
+	}
+};
+*/
 /*
 public:
 float matrix[2][2];
@@ -183,40 +203,30 @@ Global() {
 */
 
 
-
 class Game {
     public:
 	Ship ship;
 	Asteroid *ahead;
+	//PowerUp *Ahead;
 	Bullet *barr;
 	int nasteroids;
+	//int npowerups; //for powerup
 	int nbullets;
 	struct timespec bulletTimer;
 	struct timespec mouseThrustTimer;
 	bool mouseThrustOn;
-	//Kasean's code please dont delete!
-	/*Point point[MAX_POINTS];
-	Point texture[MAX_POINTS];
-	Point center;
-	int npoints;
-	int xres, yres;
-	int mode;
-	float radius;*/
+	GLuint background;
+//	GLuint meteroid;
     public:
 	Game() {
 	    ahead = NULL;
+	    //Ahead = NULL; //for powerup
 	    barr = new Bullet[MAX_BULLETS];
 	    nasteroids = 0;
+	    //npowerups = 0; //for powerup
 	    nbullets = 0;
 	    mouseThrustOn = false;
 	    //Kasean's code please dont touch!
-	    /*xres = 800;
-	    yres = 600;
-	    mode = 0;
-	    npoints = 5;
-	    center.x = xres/2;
-	    center.y = yres/2;
-	    radius = 100.0;*/
 	    //build 10 asteroids...
 	    for (int j=0; j<1; j++) {
 		Asteroid *a = new Asteroid;
@@ -252,6 +262,44 @@ class Game {
 		ahead = a;
 		++nasteroids;
 	    }
+	    /*
+	    //for powerups
+	    for (int j=0; j<1; j++) {
+		PowerUp *p1 = new PowerUp;
+		p1->nverts = 8;
+		p1->radius = rnd()*80.0 + 40.0;
+		Flt r2 = p1->radius / 2.0;
+		Flt angle = 0.0f;
+		Flt inc = (PI * 2.0) / (Flt)p1->nverts;
+		for (int i=0; i<p1->nverts; i++) {
+		    p1->vert[i][0] = sin(angle) * (r2 + rnd() * p1->radius);
+		    p1->vert[i][1] = cos(angle) * (r2 + rnd() * p1->radius);
+		    angle += inc;
+		}
+		//gl.xres = 10;
+		//gl.yres = 10;
+		//a->pos[0] = gl.xres;
+		p1->pos[0] = (Flt)(rand() % gl.xres);
+		//a->pos[1] = gl.yres;
+		p1->pos[1] = (Flt)(rand() % gl.yres);
+		p1->pos[2] = 0.0f;
+		p1->angle = 0.0;
+		p1->rotate = rnd() * 4.0 - 2.0;
+		p1->color[0] = 0.8;
+		p1->color[1] = 0.8;
+		p1->color[2] = 0.7;
+		p1->vel[0] = (Flt)(rnd()*2.0-1.0);
+		p1->vel[1] = (Flt)(rnd()*2.0-1.0);
+		//std::cout << "asteroid" << std::endl;
+		//add to front of linked list
+		p1->next = Ahead;
+		if (Ahead != NULL)
+		    Ahead->prev = p1;
+		Ahead = p1;
+		++npowerups;
+	    }*/
+
+//X Windows variables
 	    clock_gettime(CLOCK_REALTIME, &bulletTimer);
 	}
 	~Game() {
@@ -373,6 +421,7 @@ void check_mouse(XEvent *e);
 int check_keys(XEvent *e);
 void physics();
 void render();
+unsigned char *buildAlphaData(Image *img);
 
 //==========================================================================
 // M A I N
@@ -417,9 +466,74 @@ void init_opengl()
     //
     //Clear the screen to black
     glClearColor(0.0, 0.0, 0.0, 1.0);
-    //Do this to allow fonts
     glEnable(GL_TEXTURE_2D);
     initialize_fonts();
+    //----------------------------------------------------------------------
+    //Backgorund texture
+    int w = img[0].width;
+    int h = img[0].height;
+    
+    glGenTextures(1, &g.background);
+    glBindTexture(GL_TEXTURE_2D, g.background);
+    //
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    //
+    //must build a new set of data...
+    //This is where the texture is initialized in OpenGL (full sheet)
+    unsigned char *background = buildAlphaData(&img[0]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, background);
+    /*
+    //----------------------------------------------------------------------
+    //Asteroid texture
+    int w1 = img[1].width;
+	int h1 = img[1].height;
+    
+    glGenTextures(1, &g.meteroid);
+    glBindTexture(GL_TEXTURE_2D, g.meteroid);
+    //
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    //
+    //must build a new set of data...
+    //This is where the texture is initialized in OpenGL (full sheet)
+    unsigned char *meteroid = buildAlphaData(&img[1]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w1, h1, 0, GL_RGBA, GL_UNSIGNED_BYTE, meteroid);*/
+}
+
+//This function removes background from sprite sheet
+unsigned char *buildAlphaData(Image *img)
+{
+    //add 4th component to RGB stream...
+    int i;
+    unsigned char *newdata, *ptr;
+    unsigned char *data = (unsigned char *)img->data;
+    newdata = (unsigned char *)malloc(img->width * img->height * 4);
+    ptr = newdata;
+    unsigned char a, b, c;
+    //use the first pixel in the image as the transparent color.
+    unsigned char t0 = *(data + 0);
+    unsigned char t1 = *(data + 1);
+    unsigned char t2 = *(data + 2);
+    for (i = 0; i < img->width * img->height * 3; i += 3)
+    {
+        a = *(data + 0);
+        b = *(data + 1);
+        c = *(data + 2);
+        *(ptr + 0) = a;
+        *(ptr + 1) = b;
+        *(ptr + 2) = c;
+        *(ptr + 3) = 1;
+        //if pixel is color of background set the 4th component to 0
+        if (a == t0 && b == t1 && c == t2)
+            *(ptr + 3) = 0;
+        //-----------------------------------------------
+
+        //move to next pixel
+        ptr += 4;
+        data += 3;
+    }
+    return newdata;
 }
 
 void normalize2d(Vec v)
@@ -592,6 +706,33 @@ void deleteAsteroid(Game *g, Asteroid *node)
     delete node;
     node = NULL;
 }
+/*
+void deletePowerup(Game *g, PowerUp *node)
+{
+    //Remove a node from doubly-linked list.
+    //Must look at 4 special cases below.
+    if (node->prev == NULL) {
+	if (node->next == NULL) {
+	    //only 1 item in list.
+	    g->Ahead = NULL;
+	} else {
+	    //at beginning of list.
+	    node->next->prev = NULL;
+	    g->Ahead = node->next;
+	}
+    } else {
+	if (node->next == NULL) {
+	    //at end of list.
+	    node->prev->next = NULL;
+	} else {
+	    //in middle of list.
+	    node->prev->next = node->next;
+	    node->next->prev = node->prev;
+	}
+    }
+    delete node;
+    node = NULL;
+}*/
 
 void buildAsteroidFragment(Asteroid *ta, Asteroid *a)
 {
@@ -617,6 +758,31 @@ void buildAsteroidFragment(Asteroid *ta, Asteroid *a)
     ta->vel[0] = a->vel[0] + (rnd()*2.0-1.0);
     ta->vel[1] = a->vel[1] + (rnd()*2.0-1.0);
 }
+/*
+void buildPowerupFragment(PowerUp *tp, PowerUp *p1)
+{
+    //build tp from p1
+    tp->nverts = 8;
+    tp->radius = p1->radius / 2.0;
+    Flt r2 = tp->radius / 2.0;
+    Flt angle = 0.0f;
+    Flt inc = (PI * 2.0) / (Flt)tp->nverts;
+    for (int i=0; i<tp->nverts; i++) {
+	tp->vert[i][0] = sin(angle) * (r2 + rnd() * tp->radius);
+	tp->vert[i][1] = cos(angle) * (r2 + rnd() * tp->radius);
+	angle += inc;
+    }
+    tp->pos[0] = p1->pos[0] + rnd()*10.0-5.0;
+    tp->pos[1] = p1->pos[1] + rnd()*10.0-5.0;
+    tp->pos[2] = 0.0f;
+    tp->angle = 0.0;
+    tp->rotate = p1->rotate + (rnd() * 4.0 - 2.0);
+    tp->color[0] = 0.8;
+    tp->color[1] = 0.8;
+    tp->color[2] = 0.7;
+    tp->vel[0] = p1->vel[0] + (rnd()*2.0-1.0);
+    tp->vel[1] = p1->vel[1] + (rnd()*2.0-1.0);
+}*/
 
 void physics()
 {
@@ -752,7 +918,55 @@ void physics()
 	    break;
 	a = a->next;
     }
+    /*
     //---------------------------------------------------
+    //
+    //Update powerup positions
+    PowerUp *p1 = g.Ahead;
+    while (p1) {
+	p1->pos[0] += p1->vel[0];
+	p1->pos[1] += p1->vel[1];
+	//Check for collision with window edges
+	if (p1->pos[0] < -100.0) {
+	    p1->pos[0] += (float)gl.xres+200;
+	}
+	else if (p1->pos[0] > (float)gl.xres+100) {
+	    p1->pos[0] -= (float)gl.xres+200;
+	}
+	else if (p1->pos[1] < -100.0) {
+	    p1->pos[1] += (float)gl.yres+200;
+	}
+	else if (p1->pos[1] > (float)gl.yres+100) {
+	    p1->pos[1] -= (float)gl.yres+200;
+	}
+	p1->angle += p1->rotate;
+	p1 = p1->next;
+    }
+    //
+    //Powerups collision with bullets?
+    //If collision detected:
+    //   1. delete the powerup
+    //   2. delete it powerup
+    p1 = g.Ahead;
+    while (p1) {
+	//is there a bullet within its radius?
+	int i=0;
+	while (i < g.nbullets) {
+	    Bullet *b = &g.barr[i];
+	    d0 = b->pos[0] - p1->pos[0];
+	    d1 = b->pos[1] - p1->pos[1];
+	    dist = (d0*d0 + d1*d1);
+	    //delete the powerup...
+	    memcpy(&g.barr[i], &g.barr[g.nbullets-1], sizeof(Bullet));
+		g.nbullets--;
+		if (p1 == NULL)
+		    break;
+	    i++;
+	}
+	if (p1 == NULL)
+	    p1 = p1->next;
+    }*/
+
     //check keys pressed now
     
     if (gl.keys[XK_Left]) {
@@ -890,8 +1104,89 @@ Heri's code
 
 void render()
 {
+        //render background//
+        glClear(GL_COLOR_BUFFER_BIT);
+        glPushMatrix();
+        glColor3f(1.0, 1.0, 1.0);
+        glBindTexture(GL_TEXTURE_2D, g.background);
+        glEnable(GL_ALPHA_TEST);
+        glAlphaFunc(GL_GREATER, 0.0f);
+        glColor4ub(255, 255, 255, 255);
+
+        float TextWidth = (float)1.0;
+        float TextHeight = (float)1.0 * .9;
+
+        float textureX = 0;
+        float textureY = 0;
+
+        float centerX = gl.xres / 2;
+        float centerY = (gl.yres / 2);
+
+        float width = img[0].width;
+        float height = img[0].height;
+
+        glBegin(GL_QUADS);
+        glTexCoord2f(textureX, textureY + TextHeight);
+        glVertex2i(centerX - width, centerY - height);
+
+        glTexCoord2f(textureX, textureY);
+        glVertex2i(centerX - width, centerY + height);
+
+        glTexCoord2f(textureX + TextWidth, textureY);
+        glVertex2i(centerX + width, centerY + height);
+
+        glTexCoord2f(textureX + TextWidth, textureY + TextHeight);
+        glVertex2i(centerX + width, centerY - height);
+        glEnd();
+
+        glPopMatrix();
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL_ALPHA_TEST);
+/*
+		//------------------------------------------------------
+        //render asteroid//
+        glClear(GL_COLOR_BUFFER_BIT);
+        glPushMatrix();
+        glColor3f(1.0, 1.0, 1.0);
+        glBindTexture(GL_TEXTURE_2D, g.meteroid);
+        glEnable(GL_ALPHA_TEST);
+        glAlphaFunc(GL_GREATER, 0.0f);
+        glColor4ub(255, 255, 255, 255);
+
+        float ssWidth = (float)1.0;
+        float ssHeight = (float)1.0;
+
+        float textureX = 0;
+        float textureY = 0;
+
+        float centerX = gl.xres / 2;
+        float centerY = (gl.yres / 2);
+
+        float width = img[1].width;
+        float height = img[1].height;
+
+        glBegin(GL_QUADS);
+        glTexCoord2f(textureX, textureY + ssHeight);
+        glVertex2i(centerX - width, centerY - height);
+
+        glTexCoord2f(textureX, textureY);
+        glVertex2i(centerX - width, centerY + height);
+
+        glTexCoord2f(textureX + ssWidth, textureY);
+        glVertex2i(centerX + width, centerY + height);
+
+        glTexCoord2f(textureX + ssWidth, textureY + ssHeight);
+        glVertex2i(centerX + width, centerY - height);
+        glEnd();
+
+        glPopMatrix();
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL_ALPHA_TEST);
+        */
+		//------------------------------------------------------
+
     Rect r;
-    glClear(GL_COLOR_BUFFER_BIT);
+
     //
     r.bot = gl.yres - 20;
     r.left = 10;
@@ -998,6 +1293,33 @@ void render()
 	glEnd();
 	a = a->next;
     }
+
+/*
+    //------------------
+    //Draw the powerups
+    PowerUp *p1 = g.Ahead;
+    while (p1) {
+	//Log("draw powerup...\n");
+	glColor3fv(p1->color);
+	glPushMatrix();
+	glTranslatef(p1->pos[0], p1->pos[1], p1->pos[2]); //moves the shapes and attaches shpe to the moving dot
+	glRotatef(a->angle, 0.0f, 0.0f, 1.0f); //this randomly spins the shape
+
+	glBegin(GL_TRIANGLE_FAN);
+	Log("%i verts\n",p1->nverts);
+	for (int j=0; j<4; j++) {
+		glVertex2f(p1->vert[j][0], p1->vert[j][1]);
+	}
+	glEnd();
+	glPopMatrix();
+	glColor3f(1.0f, 0.0f, 0.0f);
+	glBegin(GL_POINTS);
+	glVertex2f(a->pos[0], a->pos[1]);
+	glEnd();
+	p1 = p1->next;
+    }
+
+*/
     //----------------
     //Draw the bullets
     Bullet *b = &g.barr[0];
@@ -1019,37 +1341,4 @@ void render()
 	++b;
     }
 }
-//Kasean's code please dont touch!
-/*
-const float PI = 3.141592;
-void textured_cicrle(){
-    float angle = 0.0;
-    float inc = PI * 2.0 / (float)g.npoints;
-    for (int i=0; i<g.npoints; i++){
-	g.point[i].x = cos(angle) * g.radius;
-	g.point[i].y = sin(angle) * g.radius;
-	angle += inc;
-    }
-    //draw
-    angle = 0.0;
-    float texty[g.npoints];
-    float textx[g.npoints];
-    for (int i=0; i<g.npoints; i++){
-	textx[i] = cos(angle);
-	texty[i] = sin(angle);
-	angle += inc;
-    }
-    glBindTexture(GL_TEXTURE_2D, img.texId);
-    glBegin(GL_TRIANGLE_FAN);
-    glColor3ub(255,255,255);
-    for (int i = 0; i < g.npoints; i++){
-	glTexCoord2f( ((textx[i]+1)/2), ((texty[i]+1)/2));
-	glVertex2f(g.center.x+g.point[i].x, g.center.y+g.point[i].y);
-    }
-    glEnd();
-}
-*/
-
-
-
 
