@@ -111,10 +111,9 @@ class Image {
 		unlink(ppmname);
 	}
 };
-Image img[3] = {
+Image img[2] = {
     "background.jpeg",
-    "spaceship.gif",
-    "Asteroid.png",
+    "spaceship.png",
     //"meteroid.jpg"
     };
 
@@ -226,7 +225,7 @@ class Game {
 	bool mouseThrustOn;
 	GLuint background;
 	GLuint spaceship;
-	GLuint meteroid;
+//	GLuint meteroid;
     public:
 	Game() {
 	    ahead = NULL;
@@ -537,13 +536,12 @@ void init_opengl()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
 
-    unsigned char *spaceship = buildAlphaData(&img[1]);
-    glTexImage2D(GL_TEXTURE_2D, 0, 3, w1, h1, 0, GL_RGBA, GL_UNSIGNED_BYTE, spaceship);
-    
+    glTexImage2D(GL_TEXTURE_2D, 0, 3, w1, h1, 0, GL_RGB, GL_UNSIGNED_BYTE, img[1].data);
+    /*
     //----------------------------------------------------------------------
     //Asteroid texture
-    int w2 = img[2].width;
-    int h2 = img[2].height;
+    int w1 = img[1].width;
+	int h1 = img[1].height;
     
     glGenTextures(1, &g.meteroid);
     glBindTexture(GL_TEXTURE_2D, g.meteroid);
@@ -553,8 +551,8 @@ void init_opengl()
     //
     //must build a new set of data...
     //This is where the texture is initialized in OpenGL (full sheet)
-    unsigned char *meteroid = buildAlphaData(&img[2]);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w2, h2, 0, GL_RGBA, GL_UNSIGNED_BYTE, meteroid);
+    unsigned char *meteroid = buildAlphaData(&img[1]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w1, h1, 0, GL_RGBA, GL_UNSIGNED_BYTE, meteroid);*/
 }
 
 //This function removes background from sprite sheet
@@ -1174,7 +1172,7 @@ void render()
         glColor4ub(255, 255, 255, 255);
 
         float TextWidth = (float)1.0;
-        float TextHeight = (float)1.0 * -.8;
+        float TextHeight = (float)1.0 * .9;
 
         float textureX = 0;
         float textureY = 0;
@@ -1279,52 +1277,14 @@ void render()
     glTranslatef(g.ship.pos[0], g.ship.pos[1], g.ship.pos[2]);
     //////////////////////////// add this change to code //////////////////////	
     glRotatef(g.ship.angle-90.0f, 0.0f, 0.0f, 1.0f);
-    //////////////////////////// add this change to code //////////////////////
-    glBindTexture(GL_TEXTURE_2D, g.spaceship);
-    glEnable(GL_ALPHA_TEST);
-        glAlphaFunc(GL_GREATER, 0.0f);
-        glColor4ub(255, 255, 255, 255);
-
-        TextWidth = (float)1.0;
-        TextHeight = (float)1.0;
-
-        textureX = 0;
-        textureY = 0;
-
-        centerX = (gl.xres / 500); //moves image to the dot
-        centerY = (gl.yres / 256); //moves image to the dot
-
-        width = img[1].width / 8;
-        height = img[1].height / 8;
-
-        glBegin(GL_QUADS);
-        glTexCoord2f(textureX, textureY + TextHeight);
-        glVertex2i(centerX - width, centerY - height) ;
-
-        glTexCoord2f(textureX, textureY);
-        glVertex2i(centerX - width, centerY + height) ;
-
-        glTexCoord2f(textureX + TextWidth, textureY);
-        glVertex2i(centerX + width, centerY + height);
-
-        glTexCoord2f(textureX + TextWidth, textureY + TextHeight);
-        glVertex2i(centerX + width, centerY - height);
-    glAlphaFunc(GL_GREATER, 0.0f);
-    glColor4ub(255,255,255,255);
+    //////////////////////////// add this change to code //////////////////////	
     glBegin(GL_TRIANGLES);
-    //glTexCoord2f(-12.0f, -10.0f);
-    //glTexCoord2f(0.0f, 1.0f);
-    //glTexCoord2f(0.0f, 20.0f);
-    //glTexCoord2f(0.0f, -6.0f);
-    //glTexCoord2f(0.0f, -6.0f);
-    //glTexCoord2f(0.0f, 20.0f);
-    //glTexCoord2f(12.0f, -10.0f);
-    //glVertex2f(-12.0f, -10.0f);
-    //glVertex2f(  0.0f, 20.0f);
-    //glVertex2f(  0.0f, -6.0f);
-    //glVertex2f(  0.0f, -6.0f);
-    //glVertex2f(  0.0f, 20.0f);
-    //glVertex2f( 12.0f, -10.0f);
+    glVertex2f(-12.0f, -10.0f);
+    glVertex2f(  0.0f, 20.0f);
+    glVertex2f(  0.0f, -6.0f);
+    glVertex2f(  0.0f, -6.0f);
+    glVertex2f(  0.0f, 20.0f);
+    glVertex2f( 12.0f, -10.0f);
     glEnd();
     glColor3f(1.0f, 0.0f, 0.0f);
     glBegin(GL_POINTS);
@@ -1363,73 +1323,27 @@ void render()
 	glColor3fv(a->color);
 	glPushMatrix();
 	glTranslatef(a->pos[0], a->pos[1], a->pos[2]); //moves the shapes and attaches shpe to the moving dot
-	
-	glBindTexture(GL_TEXTURE_2D, g.meteroid);
-	glEnable(GL_ALPHA_TEST);
-        glAlphaFunc(GL_GREATER, 0.0f);
-        glColor4ub(255, 255, 255, 255);
-
-        TextWidth = (float)1.0;
-        TextHeight = (float)1.0;
-
-        textureX = 0;
-        textureY = 0;
-
-        centerX = (gl.xres / 500); //moves image to the dot
-        centerY = (gl.yres / 256); //moves image to the dot
-
-        width = img[2].width / 8;
-        height = img[2].height / 8;
-
-        glBegin(GL_QUADS);
-        glTexCoord2f(textureX, textureY + TextHeight);
-        glVertex2i(centerX - width, centerY - height) ;
-
-        glTexCoord2f(textureX, textureY);
-        glVertex2i(centerX - width, centerY + height) ;
-
-        glTexCoord2f(textureX + TextWidth, textureY);
-        glVertex2i(centerX + width, centerY + height);
-
-        glTexCoord2f(textureX + TextWidth, textureY + TextHeight);
-        glVertex2i(centerX + width, centerY - height);
-    glAlphaFunc(GL_GREATER, 0.0f);
-    glColor4ub(255,255,255,255);
-    glBegin(GL_TRIANGLES);
-    //glTexCoord2f(-12.0f, -10.0f);
-    //glTexCoord2f(0.0f, 1.0f);
-    //glTexCoord2f(0.0f, 20.0f);
-    //glTexCoord2f(0.0f, -6.0f);
-    //glTexCoord2f(0.0f, -6.0f);
-    //glTexCoord2f(0.0f, 20.0f);
-    //glTexCoord2f(12.0f, -10.0f);
-    //glVertex2f(-12.0f, -10.0f);
-    //glVertex2f(  0.0f, 20.0f);
-    //glVertex2f(  0.0f, -6.0f);
-    //glVertex2f(  0.0f, -6.0f);
-    //glVertex2f(  0.0f, 20.0f);
-    //glVertex2f( 12.0f, -10.0f);
-    glEnd();
-    glColor3f(1.0f, 0.0f, 0.0f);
-    glBegin(GL_POINTS);
-    glVertex2f(0.0f, 0.0f);
-	
 	//glRotatef(a->angle, 0.0f, 0.0f, 1.0f); //this randomly spins the shape
 
-	//int i;
-	//int triangles = 100; // number of triangles
+	int i;
+	int triangles = 100; // number of triangles
 
-	//float twoPi = 2.0f * 3.14159f;
+	float twoPi = 2.0f * 3.14159f;
 
-	//glBegin(GL_TRIANGLE_FAN);
+	glBegin(GL_TRIANGLE_FAN);
 
 	//glVertex2f(my_x,my_y); // origin
 
-	//for(i = 0; i <= triangles; i++) { 
-	//    glVertex2f((a->radius * cos(i *  twoPi / triangles)), 
-	//	    (a->radius * sin(i * twoPi / triangles)));
-	//}
+	for(i = 0; i <= triangles; i++) { 
+	    glVertex2f((a->radius * cos(i *  twoPi / triangles)), 
+		    (a->radius * sin(i * twoPi / triangles)));
+	}
 
+	//glBegin(GL_TRIANGLE_FAN);
+	//Log("%i verts\n",a->nverts);
+	//for (int j=0; j<4; j++) {
+	//	glVertex2f(a->vert[j][0], a->vert[j][1]);
+	//}
 	glEnd();
 	glPopMatrix();
 	glColor3f(1.0f, 0.0f, 0.0f);
@@ -1487,7 +1401,7 @@ void render()
 
 	//---------------------------------------------------------------
 	//Draw the spaceship texture
-	/*	
+	
 	//draw a quad with texture
 	float wid = 120.0f;
 	//glColor3f(1.0, 1.0, 1.0);
@@ -1507,7 +1421,7 @@ void render()
 
 		}
 		glEnd();
-		glPopMatrix();*/
-    //}
+		glPopMatrix();
+    }
 }
 }
