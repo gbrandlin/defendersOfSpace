@@ -531,6 +531,7 @@ void init_opengl()
     int w1 = img[1].width;
     int h1 = img[1].height;
 
+    glGenTextures(1, &g.spaceship);
     glBindTexture(GL_TEXTURE_2D, g.spaceship);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -538,7 +539,7 @@ void init_opengl()
 
 
     unsigned char *spaceship = buildAlphaData(&img[1]);
-    glTexImage2D(GL_TEXTURE_2D, 0, 3, w1, h1, 0, GL_RGBA, GL_UNSIGNED_BYTE, spaceship);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w1, h1, 0, GL_RGBA, GL_UNSIGNED_BYTE, spaceship);
     
     //----------------------------------------------------------------------
     //Asteroid texture
@@ -1282,8 +1283,10 @@ void render()
     //////////////////////////// add this change to code //////////////////////	
     glRotatef(g.ship.angle-90.0f, 0.0f, 0.0f, 1.0f);
     //////////////////////////// add this change to code //////////////////////
-    glBindTexture(GL_TEXTURE_2D, g.spaceship);
-    glEnable(GL_ALPHA_TEST);
+	
+    
+     glBindTexture(GL_TEXTURE_2D, g.spaceship);
+	glEnable(GL_ALPHA_TEST);
         glAlphaFunc(GL_GREATER, 0.0f);
         glColor4ub(255, 255, 255, 255);
 
@@ -1311,28 +1314,19 @@ void render()
 
         glTexCoord2f(textureX + TextWidth, textureY + TextHeight);
         glVertex2i(centerX + width, centerY - height);
-    glAlphaFunc(GL_GREATER, 0.0f);
+	glEnd();
+	
+	glPopMatrix();
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL_ALPHA_TEST);
+
+    /*glAlphaFunc(GL_GREATER, 0.0f);
     glColor4ub(255,255,255,255);
     glBegin(GL_TRIANGLES);
-    //glTexCoord2f(-12.0f, -10.0f);
-    //glTexCoord2f(0.0f, 1.0f);
-    //glTexCoord2f(0.0f, 20.0f);
-    //glTexCoord2f(0.0f, -6.0f);
-    //glTexCoord2f(0.0f, -6.0f);
-    //glTexCoord2f(0.0f, 20.0f);
-    //glTexCoord2f(12.0f, -10.0f);
-    //glVertex2f(-12.0f, -10.0f);
-    //glVertex2f(  0.0f, 20.0f);
-    //glVertex2f(  0.0f, -6.0f);
-    //glVertex2f(  0.0f, -6.0f);
-    //glVertex2f(  0.0f, 20.0f);
-    //glVertex2f( 12.0f, -10.0f);
     glEnd();
     glColor3f(1.0f, 0.0f, 0.0f);
     glBegin(GL_POINTS);
-    glVertex2f(0.0f, 0.0f);
-    glEnd();
-    glPopMatrix();
+    glVertex2f(0.0f, 0.0f);*/
     //if (gl.keys[XK_Right] || g.mouseThrustOn) {
     //////////////////////////// add this change to code //////////////////////
     if (gl.keys[XK_Right]) {
