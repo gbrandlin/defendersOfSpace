@@ -47,7 +47,7 @@ const float TIMESLICE = 1.0f;
 const float GRAVITY = -0.2f;
 #define PI 3.141592653589793
 #define ALPHA 1
-const int MAX_BULLETS = 20;
+const int MAX_BULLETS = 10;
 const Flt MINIMUM_ASTEROID_SIZE = 60.0;
 
 //-----------------------------------------------------------------------------
@@ -1131,7 +1131,9 @@ Heri's code
 		timeCopy(&b->time, &bt);
 		b->pos[0] = g.ship.pos[0];
 		b->pos[1] = g.ship.pos[1];
-		b->vel[0] = g.ship.vel[0];
+		b->vel[0] = 2.0f;
+		//b->vel[1] = 5.0f;
+		//b->vel[0] = g.ship.vel[0];
 		b->vel[1] = g.ship.vel[1];
 		//convert ship angle to radians
 		//////////////////////////// add this change to code //////////////////////	
