@@ -16,8 +16,9 @@ all: asteroids
 
 asteroids: asteroids.cpp log.cpp timers.cpp heribertoJ.cpp kyleG.cpp georgeB.cpp kaseanD.cpp
 	g++ $(CFLAGS) asteroids.cpp log.cpp timers.cpp heribertoJ.cpp kyleG.cpp georgeB.cpp kaseanD.cpp \
-	libggfonts.a -Wall $(LFLAGS) -o asteroids
-
+	libggfonts.a -Wall $(LFLAGS) -o asteroids \
+	/usr/lib/x86_64-linux-gnu/libopenal.so \
+	/usr/lib/x86_64-linux-gnu/libalut.so 
 clean:
 	rm -f asteroids
 	rm -f *.o
