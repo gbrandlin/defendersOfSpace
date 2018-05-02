@@ -7,136 +7,67 @@
 #include<GL/glx.h>
 #include<ctime>
 #include<cstdlib>
+#include<sys/stat.h>
+#include</usr/include/AL/alut.h>
+#include<math.h>
+#include<fcntl.h>
+#include<string.h>
+#include<unistd.h>
 
-
-typedef float Flt;
-typedef float Vec[3];
-typedef Flt     Matrix[4][4];
-
-
-class PowerUp {
-    public:
-	Vec pos;
-	Vec vel;
-	int nverts;
-	Vec vert[8];
-	float angle;
-	float rotate;
-	float color[3];
-	struct Powerup *prev;
-	struct Powerup *next;
-
-    public:
-	PowerUp() {
-	    prev = NULL;
-	    next = NULL;
-	}
-
-};
-
-class GlobalPow{
-    public:
-	PowerUp *ahead;
-
-    public:
-	GlobalPow(){
-	    ahead = NULL;
-	       
-	}
-} gp;
 
 
 
 using namespace std;
 
-extern double timeDiff(struct timespec *start,struct timespec *end);
-extern void timeCopy(struct timespec *dest, struct timespec *source);
-double testFunc2();
 
+int  bulletsound(){
 
-void bulletsound(){
+   alutInit(0, NULL);
+    if (alGetError() != AL_NO_ERROR) {
+	printf("ERROR: alutInit()\n");
+    }
 
-    cout << '\a';
-    // cout << "where is the sound?";
-
-}
-
-
-
-void drawPowerUp() {
-
-    //this function will generate at random a power pack allowing for more bullets to shoot out or making bullets bigger
-
-    //Gives X ammount of power bullets to be used, will show a counter of how many are left to use
-
-    //need to create class powerUp for the power up to move randomly across the screen
-
-
-    float c1,c2,c3;
-    c1= rand()% 200 +1;
-    c2= rand()% 200 +1;
-    c3= rand()% 200 +1;
-
-
-    static float angle = 0.0;
-
-    glColor3ub(c1,c2,c3);
-    glPushMatrix();
-    glTranslatef(100,200,0);
-    glRotatef(angle,0.0f,0.0f,1.0f);
-    glTranslatef(-25.0,-25.0,0.0);
-    angle= angle +5.5;
-    glBegin(GL_QUADS);
-    glVertex2i(0,0);
-    glVertex2i(0,50);
-    glVertex2i(50,50);
-    glVertex2i(50,0);
-    glEnd();
-
-
-
-    glPopMatrix();
-}
+    alGetError();
+    float vec[6] = {0.0f,0.0f,1.0f, 0.0f,1.0f,0.0f};
+    alListener3f(AL_POSITION, 0.0f, 0.0f, 0.0f);
+    alListenerfv(AL_ORIENTATION, vec);
+    alListenerf(AL_GAIN, 1.0f);
 
 
 
 
+    ALuint alBuffer;
+    alBuffer = alutCreateBufferFromFile("./test.wav");
+    ALuint alSource;
+    alGenSources(1, &alSource);
+    alSourcei(alSource, AL_BUFFER, alBuffer);
+    alSourcef(alSource, AL_GAIN, 1.0f);
+    alSourcef(alSource, AL_PITCH, 1.0f);
+    alSourcei(alSource, AL_LOOPING, AL_FALSE);
+    if (alGetError() != AL_NO_ERROR) {
+	printf("ERROR: setting source\n");
+
+    }
+    for (int i=0; i<1; i++) {
+	alSourcePlay(alSource);
+	usleep(25);
+    }
+    // alDeleteSources(1, &alSource);
+    //alDeleteBuffers(1, &alBuffer);
+    //ALCcontext *Context = alcGetCurrentContext();
+    //ALCdevice *Device = alcGetContextsDevice(Context);
+    //alcMakeContextCurrent(NULL);
+
+    //alcDestroyContext(Context);
+
+    //alcCloseDevice(Device);
 
 
-void showNameGeorge(int x ,int y)
-{
 
-    static double t = 0.0;
-    struct timespec ftimeStart, ftimeEnd;
-    clock_gettime(CLOCK_REALTIME,&ftimeStart);
 
-    Rect r;
-
-    r.bot= y- 200;
-    r.left=10;
-    r.center = 0;
-    ggprint8b(&r,16,0x00ffff00,"GEORGE");
-    clock_gettime(CLOCK_REALTIME,&ftimeEnd);
-    t += timeDiff(&ftimeStart, &ftimeEnd);
-    ggprint8b(&r,24,0x00ffff00,"function 1 time: %lf",t);
-    ggprint8b(&r,24,0x00ffff00,"function 2 time: %lf", testFunc2());
+    return(0);
 
 }
 
-double testFunc2()
-{
-    static double t = 0.0;
-    struct timespec ftimeStart,ftimeEnd;
-    clock_gettime(CLOCK_REALTIME, &ftimeStart);
 
-    //for(int i=0;i<100;i++){
-    int a=200, b= 300;
-    a = b * 5 / 2.2;
-    b = a *7 / 13;
-    //cout<<i;
-    // }
 
-    clock_gettime(CLOCK_REALTIME, &ftimeEnd);
-    t += timeDiff(&ftimeStart, &ftimeEnd);
-    return t;
-}
