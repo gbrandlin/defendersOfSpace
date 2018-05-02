@@ -1151,6 +1151,8 @@ Heri's code
 		b->color[1] = 1.0f;
 		b->color[2] = 1.0f;
 		g.nbullets++;
+		extern int bulletsound();
+		bulletsound();
 	    }
 	}
     }
@@ -1266,10 +1268,6 @@ void render()
     //
     extern void showNameKyle(int, int);
     showNameKyle(gl.xres, gl.yres);
-    extern void showNameGeorge(int, int);
-    showNameGeorge(100, 400);
-    //extern void PowerUp(int, int);
-    //PowerUp(600, 600);
     extern void showNamekasean(int, int);
     showNamekasean(100, 600);
     extern void showNameHeri(int, int);
