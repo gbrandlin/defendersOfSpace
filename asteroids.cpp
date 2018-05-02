@@ -221,6 +221,7 @@ class Game {
 	int nasteroids;
 	//int npowerups; //for powerup
 	int nbullets;
+	int ndestroyed;
 	struct timespec bulletTimer;
 	struct timespec mouseThrustTimer;
 	bool mouseThrustOn;
@@ -432,8 +433,13 @@ void check_mouse(XEvent *e);
 int check_keys(XEvent *e);
 void physics();
 void render();
+//void sendScores();
 unsigned char *buildAlphaData(Image *img);
 void init();
+
+//initialize variables
+int playerScore = 0;
+//int sentScores = 0;
 
 //==========================================================================
 // M A I N
@@ -460,6 +466,12 @@ int main()
     logClose();
     return 0;
 }
+
+/*void sendScores() {
+    if (sentScores == 1) {
+	system("firefox www.cs.csub.edu/~kgregory/3350/scoreBoard.php");
+	sentScores = 0;
+}*/
 
 void init(){
     MakeVector(0.0,0.0,0.0, spaceship.pos);
@@ -726,6 +738,8 @@ int check_keys(XEvent *e)
 	case XK_f:
 	    break;
 	case XK_s:
+	    playerScore = g.ndestroyed;
+	    //sentScores = 1;
 	    break;
 	case XK_Down:
 	    break;
@@ -969,6 +983,7 @@ void physics()
 		//delete the bullet...
 		memcpy(&g.barr[i], &g.barr[g.nbullets-1], sizeof(Bullet));
 		g.nbullets--;
+		g.ndestroyed++;
 		if (a == NULL)
 		    break;
 	    }
@@ -1257,10 +1272,9 @@ void render()
     r.left = 10;
     r.center = 0;
     ggprint8b(&r, 16, 0x00ff0000, "Defenders of Space");
-    ggprint8b(&r, 16, 0x00ffff00, "n distance: %i", g.nasteroids);
     ggprint8b(&r, 16, 0x00ffff00, "n bullets: %i", g.nbullets);
     ggprint8b(&r, 16, 0x00ffff00, "n asteroids: %i", g.nasteroids);
-    ggprint8b(&r, 16, 0x00ffff00, "n asteroids destroyed: ");
+    ggprint8b(&r, 16, 0x00ffff00, "n asteroids destroyed: %i", g.ndestroyed);
     if (g.nasteroids == 5) {
 	extern void createScores(int);
 	createScores(g.nasteroids);
