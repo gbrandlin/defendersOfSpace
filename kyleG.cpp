@@ -219,7 +219,7 @@ char *build_get_query(char *host, char const *page) {
             
 //-----------------------------------------------------------------------------
 // SHIP modification
-
+//-----------------------------------------------------------------------------
 // Check for collision with window edge x.res 
 double ship_xboundary (double x) {
 	if (x < 0.0) {
@@ -246,7 +246,7 @@ double ship_yboundary (double y) {
 
 //-----------------------------------------------------------------------------
 // Bullet modification
-
+//-----------------------------------------------------------------------------
 // Check/delete for collision with window edge x.res
 /*double bullet_boundary (double x, double y, int b) {
 	if (x < 0.0) {
@@ -268,9 +268,8 @@ double ship_yboundary (double y) {
 
 //-----------------------------------------------------------------------------
 // Game Menu
-
-/*
-void displayMenu () {
+//-----------------------------------------------------------------------------
+/*void displayMenu () {
 	static float angle = 0.0; // Static to keep value
 	glColor3ub(255,0,0);
 	// Matrix will read bottom top when multiple translate/rotates together
