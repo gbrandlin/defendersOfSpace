@@ -1275,11 +1275,7 @@ void render()
     ggprint8b(&r, 16, 0x00ffff00, "n bullets: %i", g.nbullets);
     ggprint8b(&r, 16, 0x00ffff00, "n asteroids: %i", g.nasteroids);
     ggprint8b(&r, 16, 0x00ffff00, "n asteroids destroyed: %i", g.ndestroyed);
-    if (g.nasteroids == 5) {
-	extern void createScores(int);
-	createScores(g.nasteroids);
-    }
-    //
+    
     extern void showNameKyle(int, int);
     showNameKyle(gl.xres, gl.yres);
     extern void showNamekasean(int, int);
