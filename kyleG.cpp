@@ -192,7 +192,7 @@ char *build_get_query(char *host, char const *page) {
     char *browser = (char*)malloc(sizeof(char)*(8));
     playerscore = buf;
     *page = (char*)malloc(sizeof(char)*(60));
-    page="www.cs.csub.edu/~kgregory/3350/scoreBoard.php?param=";
+    page="www.cs.csub.edu/~kgregory/3350/defendersOfSpace/scoreBoard.php?param=";
     browser="firefox ";
     //char const *getpage = page;
     char *getpage=(char*)malloc(sizeof(char)*(60));
