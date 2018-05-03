@@ -72,7 +72,7 @@ char *highScores;
 char *get_ip(char const *host);
 int create_tcp_socket();
 void program_usage();
-void sendScores();
+void sendScore();
 char *build_get_query(char const *host, char const *page);
 
 void program_usage() {
@@ -137,7 +137,7 @@ char *build_get_query(char const *host, char const *page) {
     return query;
 }
 
-void sendScores() {
+void sendScore() {
     struct sockaddr_in *remote;
     int sock;
     int tmpres;
