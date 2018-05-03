@@ -122,8 +122,7 @@ double ship_yboundary (double y) {
 //-----------------------------------------------------------------------------
 // Game Menu
 
-/*
-void displayMenu () {
+/*void displayMenu () {
 	static float angle = 0.0; // Static to keep value
 	glColor3ub(255,0,0);
 	// Matrix will read bottom top when multiple translate/rotates together
@@ -146,77 +145,5 @@ void displayMenu () {
 	ggprint8b(&r, 16, 0x00ffffff, "GAME MENU");
 	ggprint8b
 	glPopMatrix();
-}*/
-/*
-double gameMenu () {
-	// Mouse coordinates
-	int Mx = 0;
-	int My = 0;
-	bool play1 = false;
-
-	// Menu background
-	SDL_Texture *background = IMG_LoadTexture(renderer, "FilePath");
-	// Background's rect
-	SDL_Rect background_rect;
-	background_rect x = 0;   // X COORDINATE
-	background_rect y = 0;   // Y COORDINATE
-	background_rect w = 400; // WIDTH
-	background_rect h = 400; // HEIGHT
-
-	// New Game button
-	SDL_Texture *newGame = IMG_LoadTexture(renderer, "FilePath");
-	// New Game button's rect
-	SDL_Rect newGame_Rect;
-	newGame_Rect.x = 0;
-	newGame_Rect.y = 100;
-	newGame_Rect.w = 50;
-	newGame_Rect.h = 25;
-
-	// Settings button
-	SDL_Texture *settings = IMG_LoadTexture(renderer, "FilePath");
-	// Settings button's rect
-	SDL_Rect settings_Rect;
-	settings_Rect.x = 0;
-	settings_Rect.y = 150;
-	settings_Rect.w = 50;
-	settings_Rect.h = 25;
-
-	// Exit button
-	SDL_Texture *exit = IMG_LoadTexture(renderer, "FilePath");
-	// Exit button's rect
-	SDL_Rect exit_Rect;
-	exit_Rect.x = 0;
-	exit_Rect.y = 200;
-	exit_Rect.w = 50;
-	exit_Rect.h = 25;
-
-	// IN THE GAME LOOP
-	SDL_GetMouseState(&Mx, &My); // Constantly input the x coordinate into Mx and the y coordinate into My
-
-	// Check if the mouse is touching the New Game Button
-	if (Mx >= newGame_Rect.x && Mx <= newGame_Rect.x + newGame_Rect.w && My >= newGame_Rect.y && My <= newGame_Rect.y + newGame_Rect.h) {
-		SDL_SetTextureColorMod(newGame, 250, 0, 0 ); 
-	    
-		// Call event
-		if (event->type == SDL_MOUSEBUTTONDOWN) {
-			// Initiate the newgame
-			if (event->button.button == SDL_BUTTON_LEFT) {    
-				play1 = true;
-			}
-		}
-	} else if (Mx >= exit_Rect.x && Mx <= exit_Rect.x + exit_Rect.w && My >= exit_Rect.y && My <= exit_Rect.y + exit_Rect.h) {
-		SDL_SetTextureColorMod(newGame, 250, 0, 0 ); 
-	    
-		// Call event
-		if (event->type == SDL_MOUSEBUTTONDOWN) {
-			// Initiate the newgame
-			if (event->button.button == SDL_BUTTON_LEFT) {    
-				play1 = true;
-			}
-		}
-	} else {
-		SDL_SetTextureColorMod(Gettexture(), 250, 250, 250); 
-        	// Texture tint white if the cursor isn't over the button
-	}
 }*/
 //-----------------------------------------------------------------------------
