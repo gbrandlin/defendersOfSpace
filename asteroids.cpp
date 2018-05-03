@@ -433,13 +433,15 @@ void check_mouse(XEvent *e);
 int check_keys(XEvent *e);
 void physics();
 void render();
-//void sendScores();
+void sendScores();
 unsigned char *buildAlphaData(Image *img);
 void init();
 
 //initialize variables
 int playerScore = 0;
-//int sentScores = 0;
+int sentScores = 0;
+int labFunctions = 0;
+int showMenu = 1;
 
 //==========================================================================
 // M A I N
@@ -467,11 +469,12 @@ int main()
     return 0;
 }
 
-/*void sendScores() {
+void sendScores() {
     if (sentScores == 1) {
 	system("firefox www.cs.csub.edu/~kgregory/3350/scoreBoard.php");
 	sentScores = 0;
-}*/
+    }
+}
 
 void init(){
     MakeVector(0.0,0.0,0.0, spaceship.pos);
@@ -735,11 +738,21 @@ int check_keys(XEvent *e)
     switch (key) {
 	case XK_Escape:
 	    return 1;
-	case XK_f:
+	case XK_c:
+	    showMenu = 0;
+	    break;
+	case XK_k:
+	    labFunctions = 0;
+	    break;
+	case XK_l:
+	    labFunctions = 1;
+	    break;
+	case XK_m:
+	    showMenu = 1;
 	    break;
 	case XK_s:
 	    playerScore = g.ndestroyed;
-	    //sentScores = 1;
+	    sentScores = 1;
 	    break;
 	case XK_Down:
 	    break;
@@ -1276,12 +1289,33 @@ void render()
     ggprint8b(&r, 16, 0x00ffff00, "n asteroids: %i", g.nasteroids);
     ggprint8b(&r, 16, 0x00ffff00, "n asteroids destroyed: %i", g.ndestroyed);
     
+
+    if (showMenu == 1) {
+    	r.bot = gl.yres/2;
+    	r.left = gl.xres/2;
+    	ggprint8b(&r, 16, 0x00ff0000, "Game Menu");
+    	ggprint8b(&r, 16, 0x00ffff00, "c - Start game");
+    	ggprint8b(&r, 16, 0x00ffff00, "up arrow key - Move up");
+    	ggprint8b(&r, 16, 0x00ffff00, "right arrow key - Move right");
+    	ggprint8b(&r, 16, 0x00ffff00, "bottom arrow key - Move down");
+    	ggprint8b(&r, 16, 0x00ffff00, "left arrow key - Move left");
+    	ggprint8b(&r, 16, 0x00ffff00, "esc - Exit game");
+    }
+
+    if (g.nasteroids == 0) {
+    	r.bot = gl.yres/2;
+    	r.left = gl.xres/2;
+    	ggprint8b(&r, 16, 0x0041b9e1, "YOU WIN!");
+    }
+
     extern void showNameKyle(int, int);
-    showNameKyle(gl.xres, gl.yres);
     extern void showNamekasean(int, int);
-    showNamekasean(100, 600);
     extern void showNameHeri(int, int);
-    showNameHeri(100, 500);
+    if (labFunctions == 1) {
+    	showNameKyle(gl.xres, gl.yres);
+    	showNamekasean(100, 600);
+    	showNameHeri(100, 500);
+    }
     //-------------
     //Draw the ship
     
