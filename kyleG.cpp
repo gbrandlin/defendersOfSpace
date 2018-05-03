@@ -8,7 +8,7 @@ using namespace std;
 #include "GL/glx.h"
 #include <ctime>
 #include <fstream>
-/*#include <unistd.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -18,7 +18,7 @@ using namespace std;
 #define USERAGENT "HTMLGET 1.0"
 #define PAGE "/"
 #define PORT 80
-#define HOST "coding.debuntu.org"*/
+#define HOST "coding.debuntu.org"
 
 
 // Setup timers
@@ -67,27 +67,88 @@ double testTime() {
 //-----------------------------------------------------------------------------
 // Send HighScore using HTTP
 //-----------------------------------------------------------------------------
-/*extern int playerScore;
+extern int playerScore;
 char *highScores;
-char *get_ip(char *host);
+char *get_ip(char const *host);
 int create_tcp_socket();
 void program_usage();
-char *build_get_query(char *host, char const *page);
+void sendScores();
+char *build_get_query(char const *host, char const *page);
 
-int main(int argc, char **argv) {
+void program_usage() {
+    cout << stderr << "USAGE: htmlget host [page]\n\thost: the website "
+    << " hostname. ex: coding.debuntu.org\n\tpage: the page to retrieve. "
+    << " ex: index.html, default: /\n" << endl;
+}
+
+int create_tcp_socket() {
+    int sock;
+    if ((sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
+        perror("ERROR: Unable to create TCP socket");
+        exit(1);
+    }
+    return sock;
+}
+
+char *get_ip(char const *host) {
+    struct hostent *hent;
+    int iplen = 15;
+    char *ip = (char *)malloc(iplen+1);
+    memset(ip, 0, iplen+1);
+    if ((hent = gethostbyname(host)) == NULL) {
+        herror("ERROR: Unable to obtain IP host by name");
+        exit(1);
+    }
+    if (inet_ntop(AF_INET, (void *)hent->h_addr_list[0], ip, iplen+1) == NULL) {
+        perror("ERROR: Unable to resolve host with inet_ntop");
+        exit(1);
+    }
+    return ip;
+}
+
+char *build_get_query(char const *host, char const *page) {
+    //char *buf = (char*)malloc(sizeof(char)*(20));
+    //sprintf(buf, "%d", playerScore);
+    char *query;
+    //char *playerscore = (char*)malloc(sizeof(char)*(2));
+    //char *browser = (char*)malloc(sizeof(char)*(8));
+    //playerscore = buf;
+    //*page = (char*)malloc(sizeof(char)*(60));
+    //page="www.cs.csub.edu/~kgregory/3350/defendersOfSpace/scoreBoard.php?param=";
+    //browser="firefox ";
+    char const *getpage = page;
+    //char *getpage=(char*)malloc(sizeof(char)*(60));
+ 
+    //strcpy(getpage, browser);
+    //strcat(getpage, page);
+    //strcat(getpage, playerscore);
+    //system(getpage);
+    
+    char const *tpl = "GET /%s HTTP/1.0\r\nHost: %s\r\nUser-Agent: %s\r\n\r\n";
+    if (getpage[0] == '/') {
+        getpage = getpage + 1;
+        cout << stderr << "Removing leading \"/\", converting " << page
+        << " to " << getpage << "\n" << endl;
+    }
+    // -5 is to consider the %s %s %s in tpl and the ending \0
+    query = (char *)malloc(strlen(host)+strlen(getpage)+strlen(USERAGENT)+
+                           strlen(tpl)-5);
+    sprintf(query, tpl, getpage, host, USERAGENT);
+    return query;
+}
+
+void sendScores() {
     struct sockaddr_in *remote;
     int sock;
     int tmpres;
     char *ip;
     char *get;
     char buf[BUFSIZ+1];
-    char *host;
+    char const *host;
     char const *page;
-
-    host = (char*)malloc(sizeof(char)*(20));
-    page = (char*)malloc(sizeof(char)*(36));
-    *host = "sleipnir.cs.csubak.edu";
-    *page = "/~kgregory/3350/defendersOfSpace/scoreBoard.php";
+	
+    host = "sleipnir.cs.csubak.edu";
+    page = "/~kgregory/3350/defendersOfSpace/scoreBoard.php";
     sock = create_tcp_socket();
     ip = get_ip(host);
     cout << stderr << "IP is " << ip << "\n" << endl;
@@ -130,7 +191,7 @@ int main(int argc, char **argv) {
              * If the \r\n\r\n part is splitted into two messages
              * it will fail to detect the beginning of HTML content
              */
-            /*htmlcontent = strstr(buf, "\r\n\r\n");
+            htmlcontent = strstr(buf, "\r\n\r\n");
             if (htmlcontent != NULL) {
                 htmlstart = 1;
                 htmlcontent += 4;
@@ -150,70 +211,7 @@ int main(int argc, char **argv) {
     free(remote);
     free(ip);
     close(sock);
-    return 0;
 }
-
-void program_usage() {
-    cout << stderr << "USAGE: htmlget host [page]\n\thost: the website "
-    << " hostname. ex: coding.debuntu.org\n\tpage: the page to retrieve. "
-    << " ex: index.html, default: /\n" << endl;
-}
-
-int create_tcp_socket() {
-    int sock;
-    if ((sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
-        perror("ERROR: Unable to create TCP socket");
-        exit(1);
-    }
-    return sock;
-}
-
-char *get_ip(char *host) {
-    struct hostent *hent;
-    int iplen = 17;
-    char *ip = (char *)malloc(iplen+1);
-    memset(ip, 0, iplen+1);
-    if ((hent = gethostbyname(host)) == NULL) {
-        herror("ERROR: Unable to obtain IP host by name");
-        exit(1);
-    }
-    if (inet_ntop(AF_INET, (void *)hent->h_addr_list[0], ip, iplen+1) == NULL) {
-        perror("ERROR: Unable to resolve host with inet_ntop");
-        exit(1);
-    }
-    return ip;
-}
-
-char *build_get_query(char *host, char const *page) {
-    char *buf = (char*)malloc(sizeof(char)*(20));
-    sprintf(buf, "%d", playerScore);
-    char *query;
-    char *playerscore = (char*)malloc(sizeof(char)*(2));
-    char *browser = (char*)malloc(sizeof(char)*(8));
-    playerscore = buf;
-    *page = (char*)malloc(sizeof(char)*(60));
-    page="www.cs.csub.edu/~kgregory/3350/defendersOfSpace/scoreBoard.php?param=";
-    browser="firefox ";
-    //char const *getpage = page;
-    char *getpage=(char*)malloc(sizeof(char)*(60));
- 
-    strcpy(getpage, browser);
-    strcat(getpage, page);
-    strcat(getpage, playerscore);
-    system(getpage);
-    
-    char const *tpl = "GET /%s HTTP/1.0\r\nHost: %s\r\nUser-Agent: %s\r\n\r\n";
-    if (getpage[0] == '/') {
-        getpage = getpage + 1;
-        cout << stderr << "Removing leading \"/\", converting " << page
-        << " to " << getpage << "\n" << endl;
-    }
-    // -5 is to consider the %s %s %s in tpl and the ending \0
-    query = (char *)malloc(strlen(host)+strlen(getpage)+strlen(USERAGENT)+
-                           strlen(tpl)-5);
-    sprintf(query, tpl, getpage, host, USERAGENT);
-    return query;
-}*/
 //-----------------------------------------------------------------------------
 
             
