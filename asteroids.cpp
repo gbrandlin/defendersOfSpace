@@ -57,6 +57,7 @@ extern struct timespec timeStart, timeCurrent;
 extern double timeDiff(struct timespec *start, struct timespec *end);
 extern void timeCopy(struct timespec *dest, struct timespec *source);
 //-----------------------------------------------------------------------------
+bool StartMenu = true;
 
 class Image {
     public:
@@ -111,11 +112,11 @@ class Image {
 		unlink(ppmname);
 	}
 };
-Image img[3] = {
+Image img[4] = {
     "background.jpeg",
     "spaceship.gif",
     "Asteroid.png",
-    //"meteroid.jpg"
+    "menu.png",
     };
 
 class Global {
@@ -228,6 +229,7 @@ class Game {
 	GLuint background;
 	GLuint spaceship;
 	GLuint meteroid;
+	GLuint menu;
     public:
 	Game() {
 	    ahead = NULL;
@@ -571,6 +573,21 @@ void init_opengl()
     //This is where the texture is initialized in OpenGL (full sheet)
     unsigned char *meteroid = buildAlphaData(&img[2]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w2, h2, 0, GL_RGBA, GL_UNSIGNED_BYTE, meteroid);
+    //----------------------------------------------------------------------
+    //Menu texture
+    int w3 = img[3].width;
+    int h3 = img[3].height;
+    
+    glGenTextures(1, &g.menu);
+    glBindTexture(GL_TEXTURE_2D, g.menu);
+    //
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    //
+    //must build a new set of data...
+    //This is where the texture is initialized in OpenGL (full sheet)
+    unsigned char *menu = buildAlphaData(&img[3]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w3, h3, 0, GL_RGBA, GL_UNSIGNED_BYTE, menu);
 }
 
 //This function removes background from sprite sheet
@@ -624,9 +641,9 @@ void normalize2d(Vec v)
 void check_mouse(XEvent *e)
 {
     //Was a mouse button clicked?
-    static int savex = 0;
-    static int savey = 0;
-    static int ct=0;
+    //static int savex = 0;
+    //static int savey = 0;
+    //static int ct=0;
     if (e->type != ButtonPress &&
 	    e->type != ButtonRelease &&
 	    e->type != MotionNotify)
@@ -670,6 +687,7 @@ void check_mouse(XEvent *e)
 	    //Right button is down
 	}
     }
+    /*
     if (e->type == MotionNotify) {
 	if (savex != e->xbutton.x || savey != e->xbutton.y) {
 	    //Mouse moved
@@ -712,7 +730,7 @@ void check_mouse(XEvent *e)
 	    x11.set_mouse_position(100, 100);
 	    savex = savey = 100;
 	}
-    }
+    }*/
 }
 
 int check_keys(XEvent *e)
@@ -740,6 +758,7 @@ int check_keys(XEvent *e)
 	    return 1;
 	case XK_c:
 	    showMenu = 0;
+	    StartMenu = false;
 	    break;
 	case XK_k:
 	    labFunctions = 0;
@@ -1194,14 +1213,15 @@ Heri's code
     }
 }
 
-void render()
-{
+//Kasean's Starting Menu
+void renderStartMenu() {
+        glClear(GL_COLOR_BUFFER_BIT);
+
     
         //render background//
-        glClear(GL_COLOR_BUFFER_BIT);
         glPushMatrix();
         glColor3f(1.0, 1.0, 1.0);
-        glBindTexture(GL_TEXTURE_2D, g.background);
+        glBindTexture(GL_TEXTURE_2D, g.menu);
         glEnable(GL_ALPHA_TEST);
         glAlphaFunc(GL_GREATER, 0.0f);
         glColor4ub(255, 255, 255, 255);
@@ -1215,8 +1235,8 @@ void render()
         float centerX = gl.xres / 2;
         float centerY = (gl.yres / 2);
 
-        float width = img[0].width;
-        float height = img[0].height;
+        float width = img[3].width;
+        float height = img[3].height;
 
         glBegin(GL_QUADS);
         glTexCoord2f(textureX, textureY + TextHeight);
@@ -1235,6 +1255,85 @@ void render()
         glPopMatrix();
         glBindTexture(GL_TEXTURE_2D, 0);
         glDisable(GL_ALPHA_TEST);
+}
+
+void PowerUp(){
+    float c1;
+    float c2;
+    float c3;
+
+    c1 = rand()% 200 + 1;
+    c2 = rand()% 200 + 1;
+    c3 = rand()% 200 + 1;
+
+    float dirX;
+    float dirY;
+
+    dirX = 1000;
+    dirY = 500;
+
+    static float angle = 0.0;
+
+    glColor3ub(c1,c2,c3);
+    glPushMatrix();
+    glTranslatef(dirX,dirY,0.0);
+    glRotatef(angle,0.0f,0.0f,1.0f);
+    glTranslatef(-25.0,-25.0,0.0);
+    angle = angle + 5.5;
+    glBegin(GL_QUADS);
+    glVertex2i(0,0);
+    glVertex2i(0,50);
+    glVertex2i(50,50);
+    glVertex2i(50,0);
+    glEnd();
+
+    glPopMatrix();
+
+}
+
+void render()
+{
+
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        //render background//
+        glPushMatrix();
+        glColor3f(1.0, 1.0, 1.0);
+        glBindTexture(GL_TEXTURE_2D, g.background);
+        glEnable(GL_ALPHA_TEST);
+        glAlphaFunc(GL_GREATER, 0.0f);
+        glColor4ub(255, 255, 255, 255);
+
+        float TextWidth = (float)1.0;
+        float TextHeight = (float)1.0 * -.8;
+
+        float textureX = 0;
+        float textureY = 0;
+
+        float centerX = gl.xres / 2;
+        float centerY = (gl.yres / 2);
+
+        float width = img[0].width;
+        float height = img[0].height;
+        glBegin(GL_QUADS);
+        glTexCoord2f(textureX, textureY + TextHeight);
+        glVertex2i(centerX - width, centerY - height);
+
+        glTexCoord2f(textureX, textureY);
+        glVertex2i(centerX - width, centerY + height);
+
+        glTexCoord2f(textureX + TextWidth, textureY);
+        glVertex2i(centerX + width, centerY + height);
+
+        glTexCoord2f(textureX + TextWidth, textureY + TextHeight);
+        glVertex2i(centerX + width, centerY - height);
+        glEnd();
+
+        glPopMatrix();
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL_ALPHA_TEST);
+
+	PowerUp();
 /*
 		//------------------------------------------------------
         //render asteroid//
@@ -1290,17 +1389,6 @@ void render()
     ggprint8b(&r, 16, 0x00ffff00, "n asteroids destroyed: %i", g.ndestroyed);
     
 
-    if (showMenu == 1) {
-    	r.bot = gl.yres/2;
-    	r.left = gl.xres/2;
-    	ggprint8b(&r, 16, 0x00ff0000, "Game Menu");
-    	ggprint8b(&r, 16, 0x00ffff00, "c - Start game");
-    	ggprint8b(&r, 16, 0x00ffff00, "up arrow key - Move up");
-    	ggprint8b(&r, 16, 0x00ffff00, "right arrow key - Move right");
-    	ggprint8b(&r, 16, 0x00ffff00, "bottom arrow key - Move down");
-    	ggprint8b(&r, 16, 0x00ffff00, "left arrow key - Move left");
-    	ggprint8b(&r, 16, 0x00ffff00, "esc - Exit game");
-    }
 
     if (g.nasteroids == 0) {
     	r.bot = gl.yres/2;
@@ -1309,11 +1397,11 @@ void render()
     }
 
     extern void showNameKyle(int, int);
-    extern void showNamekasean(int, int);
+    //extern void showNamekasean(int, int);
     extern void showNameHeri(int, int);
     if (labFunctions == 1) {
     	showNameKyle(gl.xres, gl.yres);
-    	showNamekasean(100, 600);
+    //	showNamekasean(100, 600);
     	showNameHeri(100, 500);
     }
     //-------------
@@ -1547,5 +1635,20 @@ void render()
 		glEnd();
 		glPopMatrix();*/
     //}
+	}
+	if (StartMenu){
+	    renderStartMenu();
+	    
+	    if (showMenu == 1) {
+		r.bot = gl.yres / 3;
+		r.left = gl.xres / 1.9;
+		ggprint8b(&r, 16, 0x00ff0000, "Game Menu");
+		ggprint8b(&r, 16, 0x00ffff00, "c - Start game");
+		ggprint8b(&r, 16, 0x00ffff00, "up arrow key - Move up");
+		ggprint8b(&r, 16, 0x00ffff00, "right arrow key - Move right");
+		ggprint8b(&r, 16, 0x00ffff00, "bottom arrow key - Move down");
+		ggprint8b(&r, 16, 0x00ffff00, "left arrow key - Move left");
+		ggprint8b(&r, 16, 0x00ffff00, "esc - Exit game");
+    }
 }
 }
