@@ -58,6 +58,7 @@ extern double timeDiff(struct timespec *start, struct timespec *end);
 extern void timeCopy(struct timespec *dest, struct timespec *source);
 //-----------------------------------------------------------------------------
 bool StartMenu = true;
+bool GameOver = false;
 
 class Image {
     public:
@@ -112,11 +113,12 @@ class Image {
 		unlink(ppmname);
 	}
 };
-Image img[4] = {
+Image img[5] = {
     "background.jpeg",
     "spaceship.gif",
     "Asteroid.png",
     "menu.png",
+    "gameover.png",
     };
 
 class Global {
@@ -230,6 +232,7 @@ class Game {
 	GLuint spaceship;
 	GLuint meteroid;
 	GLuint menu;
+	GLuint gameover;
     public:
 	Game() {
 	    ahead = NULL;
@@ -245,7 +248,8 @@ class Game {
 	    for (int j=0; j<1; j++) {
 		Asteroid *a = new Asteroid;
 		a->nverts = 8;
-		a->radius = rnd()*80.0 + 40.0;
+		//a->radius = rnd()*80.0 + 40.0;
+		a->radius = rnd()*10.0 + 40.0;
 		Flt r2 = a->radius / 2.0;
 		Flt angle = 0.0f;
 		Flt inc = (PI * 2.0) / (Flt)a->nverts;
@@ -444,6 +448,7 @@ int playerScore = 0;
 int sentScores = 0;
 int labFunctions = 0;
 int showMenu = 1;
+int shipLives = 3;
 
 //==========================================================================
 // M A I N
@@ -588,6 +593,21 @@ void init_opengl()
     //This is where the texture is initialized in OpenGL (full sheet)
     unsigned char *menu = buildAlphaData(&img[3]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w3, h3, 0, GL_RGBA, GL_UNSIGNED_BYTE, menu);
+    //----------------------------------------------------------------------
+    //Gameover texture
+    int w4 = img[4].width;
+    int h4 = img[4].height;
+    
+    glGenTextures(1, &g.gameover);
+    glBindTexture(GL_TEXTURE_2D, g.gameover);
+    //
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    //
+    //must build a new set of data...
+    //This is where the texture is initialized in OpenGL (full sheet)
+    unsigned char *gameover = buildAlphaData(&img[4]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w4, h4, 0, GL_RGBA, GL_UNSIGNED_BYTE, gameover);
 }
 
 //This function removes background from sprite sheet
@@ -809,8 +829,8 @@ void deleteAsteroid(Game *g, Asteroid *node)
     delete node;
     node = NULL;
 }
-/*
-void deletePowerup(Game *g, PowerUp *node)
+
+/*void deletePowerup(Game *g, PowerUp *node)
 {
     //Remove a node from doubly-linked list.
     //Must look at 4 special cases below.
@@ -892,7 +912,8 @@ void physics()
     if (g.showSpaceship){
 	moveSpaceship();
     }
-    Flt d0,d1,dist;
+    //c0 and c1 are the distances for the bullets
+    Flt d0,d1,c0,c1,dist,dist1;
     //Update ship position
     g.ship.pos[0] += g.ship.vel[0];
     g.ship.pos[1] += g.ship.vel[1];
@@ -976,14 +997,27 @@ void physics()
     a = g.ahead;
     while (a) {
 	//is there a bullet within its radius?
-	int i=0;
+	//collision for the ship
+	int i = 0;
+	d0 = g.ship.pos[0] - a->pos[0];
+	d1 = g.ship.pos[1] - a->pos[1];
+	dist = (d0*d0 + d1*d1);
+	// If ship collides with asteroid
+	if (dist < (a->radius*a->radius)) {
+	    shipLives = shipLives - 1 ;
+	    if (shipLives == 0) {
+		GameOver = true;
+	    }
+	    //delete ship
+	    //game over
+	}
 	while (i < g.nbullets) {
 	    Bullet *b = &g.barr[i];
-	    d0 = b->pos[0] - a->pos[0];
-	    d1 = b->pos[1] - a->pos[1];
-	    dist = (d0*d0 + d1*d1);
-	    if (dist < (a->radius*a->radius)) {
-		//cout << "asteroid hit." << endl;
+	    c0 = b->pos[0] - a->pos[0];
+	    c1 = b->pos[1] - a->pos[1];
+	    dist1 = (c0*c0 + c1*c1);
+	    if (dist1 < (a->radius*a->radius)) {
+		cout << "asteroid hit." << endl;
 		//this asteroid is hit.
 		if (a->radius > MINIMUM_ASTEROID_SIZE) {
 		    //break it into pieces.
@@ -1213,12 +1247,58 @@ Heri's code
     }
 }
 
+
+//Kasean's Gameoveer Menu
+void renderGameOver() {
+        glClear(GL_COLOR_BUFFER_BIT);
+
+    
+        //render gameover screen//
+        glPushMatrix();
+        glColor3f(1.0, 1.0, 1.0);
+        glBindTexture(GL_TEXTURE_2D, g.gameover);
+        glEnable(GL_ALPHA_TEST);
+        glAlphaFunc(GL_GREATER, 0.0f);
+        glColor4ub(255, 255, 255, 255);
+
+        float TextWidth = (float)1.0;
+        float TextHeight = (float)1.0 * -.8;
+
+        float textureX = 0;
+        float textureY = 0;
+
+        float centerX = gl.xres / 2;
+        float centerY = (gl.yres / 2);
+
+        float width = img[3].width;
+        float height = img[3].height;
+
+        glBegin(GL_QUADS);
+        glTexCoord2f(textureX, textureY + TextHeight);
+        glVertex2i(centerX - width, centerY - height);
+
+        glTexCoord2f(textureX, textureY);
+        glVertex2i(centerX - width, centerY + height);
+
+        glTexCoord2f(textureX + TextWidth, textureY);
+        glVertex2i(centerX + width, centerY + height);
+
+        glTexCoord2f(textureX + TextWidth, textureY + TextHeight);
+        glVertex2i(centerX + width, centerY - height);
+        glEnd();
+
+        glPopMatrix();
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL_ALPHA_TEST);
+}
+
+
 //Kasean's Starting Menu
 void renderStartMenu() {
         glClear(GL_COLOR_BUFFER_BIT);
 
     
-        //render background//
+        //render starting menu//
         glPushMatrix();
         glColor3f(1.0, 1.0, 1.0);
         glBindTexture(GL_TEXTURE_2D, g.menu);
@@ -1266,11 +1346,15 @@ void PowerUp(){
     c2 = rand()% 200 + 1;
     c3 = rand()% 200 + 1;
 
+    for(int i = 0; i <= 100; i++){
+
     float dirX;
     float dirY;
+    float move1 = 5;
+    float move2 = 5;
 
-    dirX = 1000;
-    dirY = 500;
+    dirX = 1000 + sin(move1);
+    dirY = 500 + cos(move2);
 
     static float angle = 0.0;
 
@@ -1288,7 +1372,7 @@ void PowerUp(){
     glEnd();
 
     glPopMatrix();
-
+    }
 }
 
 void render()
@@ -1390,11 +1474,6 @@ void render()
     
 
 
-    if (g.nasteroids == 0) {
-    	r.bot = gl.yres/2;
-    	r.left = gl.xres/2;
-    	ggprint8b(&r, 16, 0x0041b9e1, "YOU WIN!");
-    }
 
     extern void showNameKyle(int, int);
     //extern void showNamekasean(int, int);
@@ -1611,6 +1690,7 @@ void render()
 	glEnd();
 	++b;
 
+	}
 	//---------------------------------------------------------------
 	//Draw the spaceship texture
 	/*	
@@ -1635,7 +1715,12 @@ void render()
 		glEnd();
 		glPopMatrix();*/
     //}
-	}
+    if ((g.nasteroids == 0) || (GameOver == true)) {
+    //	r.bot = gl.yres/2;
+    //	r.left = gl.xres/2;
+    //	ggprint8b(&r, 16, 0x0041b9e1, "YOU WIN!");
+    renderGameOver();
+}
 	if (StartMenu){
 	    renderStartMenu();
 	    
