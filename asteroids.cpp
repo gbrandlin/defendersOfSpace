@@ -245,7 +245,7 @@ class Game {
 	    mouseThrustOn = false;
 	    //Kasean's code please dont touch!
 	    //build 10 asteroids...
-	    for (int j=0; j<1; j++) {
+	    for (int j=0; j<20; j++) {
 		Asteroid *a = new Asteroid;
 		a->nverts = 8;
 		//a->radius = rnd()*80.0 + 40.0;
@@ -460,6 +460,8 @@ int main()
     srand(time(NULL));
     x11.set_mouse_position(100, 100);
     int done=0;
+    extern int startMenuSound();
+    startMenuSound();
     while (!done) {
 	while (x11.getXPending()) {
 	    XEvent e = x11.getXNextEvent();
@@ -828,6 +830,8 @@ void deleteAsteroid(Game *g, Asteroid *node)
     }
     delete node;
     node = NULL;
+    extern int explosion();
+    explosion();
 }
 
 /*void deletePowerup(Game *g, PowerUp *node)
@@ -1251,7 +1255,6 @@ Heri's code
 //Kasean's Gameoveer Menu
 void renderGameOver() {
         glClear(GL_COLOR_BUFFER_BIT);
-
     
         //render gameover screen//
         glPushMatrix();
@@ -1296,7 +1299,6 @@ void renderGameOver() {
 //Kasean's Starting Menu
 void renderStartMenu() {
         glClear(GL_COLOR_BUFFER_BIT);
-
     
         //render starting menu//
         glPushMatrix();
@@ -1716,9 +1718,9 @@ void render()
 		glPopMatrix();*/
     //}
     if ((g.nasteroids == 0) || (GameOver == true)) {
-    //	r.bot = gl.yres/2;
-    //	r.left = gl.xres/2;
-    //	ggprint8b(&r, 16, 0x0041b9e1, "YOU WIN!");
+    	r.bot = gl.yres/2;
+    	r.left = gl.xres/2;
+    	ggprint8b(&r, 16, 0x0041b9e1, "YOU WIN!");
     renderGameOver();
 }
 	if (StartMenu){
