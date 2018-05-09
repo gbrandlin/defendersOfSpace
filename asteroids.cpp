@@ -916,11 +916,6 @@ void physics() {
 	g.ship.vel[0] += xdir*0.10f;
 	g.ship.vel[1] += ydir*0.10f;
     }
-    /*
-       Heri's code
-       extern void shipMovement();
-       shipMovement();
-       */
     if (gl.keys[XK_space] && !ChargedBeam) {
 	if (!WavePowerUp) {
 	    //a little time between each bullet
@@ -1018,7 +1013,7 @@ void physics() {
 
 }
 
-//Kasean's Gameoveer Menu
+//Kasean
 void renderGameOver() {
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -1054,7 +1049,7 @@ void renderGameOver() {
     glDisable(GL_ALPHA_TEST);
 }
 
-//Kasean's Starting Menu
+//Kasean
 void renderStartMenu() {
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -1126,7 +1121,7 @@ void PowerUp() {
     }
 }
 
-
+// Kasean
 void Background() {
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -1163,6 +1158,7 @@ void Background() {
     glDisable(GL_ALPHA_TEST);
 }
 
+// Kyle
 void showOptions() {
     Rect r;
     r.bot = gl.yres / 3;
@@ -1176,6 +1172,7 @@ void showOptions() {
     ggprint8b(&r, 16, 0x00ffff00, "esc - Exit game");
 }
 
+// Kyle
 void showWinner() {
     Rect r;
     r.bot = gl.yres/2;
@@ -1194,6 +1191,7 @@ void showScore() {
     ggprint8b(&r, 16, 0x00ffff00, "n asteroids destroyed: %i", g.ndestroyed);
 }    
 
+// Kasean
 void drawShip() {
     float TextWidth = (float)1.0;
     float TextHeight = (float)1.0 * -.8;
@@ -1262,6 +1260,7 @@ void drawShip() {
     }
 }
 
+// CHANGED
 void showBullet() {
     //Draw the bullets
     Bullet *b = &g.barr[0];
