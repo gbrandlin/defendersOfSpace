@@ -13,6 +13,8 @@
 #include<fcntl.h>
 #include<string.h>
 #include<unistd.h>
+//#ifdef USE_SOUND
+//#endif // USE_SOUND
 
 
 void initSound(){
@@ -33,13 +35,13 @@ void initSound(){
 
 int  bulletsound(){
 
-
+//#ifdef USE_SOUND
     initSound();
 
 
 
     ALuint bullBuff;
-    bullBuff = alutCreateBufferFromFile("./test.wav");
+    bullBuff = alutCreateBufferFromFile("./laser.wav");
     ALuint bullSrc;
     alGenSources(1, &bullSrc);
     alSourcei(bullSrc, AL_BUFFER, bullBuff);
@@ -58,7 +60,7 @@ int  bulletsound(){
     //alcMakeContextCurrent(NULL);
     //alcDestroyContext(Context);
     //alcCloseDevice(Device);
-
+//#endif
     return(0);
 
 }
@@ -68,18 +70,18 @@ int startMenuSound(){
     //not sure might have to make more functions?
     //when this is put in a render function it plays continuesly
     //maybe the trick is not to call it in render...
-
+//#ifdef USE_SOUND
     initSound();
 
     ALuint menuSoundBuff;
-    menuSoundBuff = alutCreateBufferFromFile("./feel_good_x.wav");
+    menuSoundBuff = alutCreateBufferFromFile("./intro2.wav");
     ALuint menuSoundSrc;
     alGenSources(1, &menuSoundSrc);
     alSourcei(menuSoundSrc, AL_BUFFER, menuSoundBuff);
-    alSourcef(menuSoundSrc, AL_GAIN, 1.0f);
+    alSourcef(menuSoundSrc, AL_GAIN, 0.6f);
     alSourcef(menuSoundSrc, AL_PITCH, 1.0f);
     //WHEN SET TO TRUE plays for the entire game...
-    alSourcei(menuSoundSrc, AL_LOOPING, AL_FALSE);
+    alSourcei(menuSoundSrc, AL_LOOPING, AL_TRUE);
     if (alGetError() != AL_NO_ERROR) {
 	printf("ERROR: setting source in gameStart\n");
 
@@ -98,7 +100,7 @@ int startMenuSound(){
     //alcMakeContextCurrent(NULL);
     //alcDestroyContext(Context);
     //alcCloseDevice(Device);
-
+//#endif
     return(0);
 }
 
@@ -120,16 +122,16 @@ int startMenuSound(){
 int explosion(){
     //found in astriods .cpp
     //void deleteAstriod line 808
-
+//#ifdef USE_SOUND
     initSound();
 
     ALuint exploBuff;
-    exploBuff = alutCreateBufferFromFile("./test.wav");
+    exploBuff = alutCreateBufferFromFile("./explosion.wav");
     ALuint exploSrc;
     alGenSources(1, &exploSrc);
     alSourcei(exploSrc, AL_BUFFER, exploBuff);
     alSourcef(exploSrc, AL_GAIN, 1.0f);
-    alSourcef(exploSrc, AL_PITCH, 0.2f);
+    alSourcef(exploSrc, AL_PITCH, 0.5f);
     //WHEN SET TO TRUE plays for the entire game...
         alSourcei(exploSrc, AL_LOOPING, AL_FALSE);
             if (alGetError() != AL_NO_ERROR) {
@@ -139,7 +141,7 @@ int explosion(){
     
  alSourcePlay(exploSrc);
      printf("explosionplayed\n");
-
+//#endif
 return(0);
 
 
