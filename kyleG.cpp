@@ -219,25 +219,25 @@ void sendScore() {
 // SHIP modification
 //-----------------------------------------------------------------------------
 // Check for collision with window edge x.res 
-double ship_xboundary (double x) {
+int ship_xboundary (double x,int xres) {
 	if (x < 0.0) {
-		x = 0.0;
+		return -1;
 	}
-	else if (x > 1250.0) {
-		x = 1250.0;
+	else if (x > xres) {
+		return 1;
 	}
-	return x;
+	return 0;
 }
 
 // Check for collision with window edge y.res
-double ship_yboundary (double y) {
+int ship_yboundary (double y,int yres) {
 	if (y < 0.0) {
-		y = 0.0;
+		return -1;
 	}
-	else if (y > 900.0) {
-		y = 900.0;
+	else if (y > yres) {
+		return 1;
 	}
-	return y;
+	return 0;
 }
 //-----------------------------------------------------------------------------
 
