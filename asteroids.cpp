@@ -245,7 +245,7 @@ class Game {
 	    mouseThrustOn = false;
 	    //Kasean's code please dont touch!
 	    //build 10 asteroids...
-	    for (int j=0; j<20; j++) {
+	    for (int j=0; j<1; j++) {
 		Asteroid *a = new Asteroid;
 		a->nverts = 8;
 		//a->radius = rnd()*80.0 + 40.0;
@@ -1717,12 +1717,13 @@ void render()
 		glEnd();
 		glPopMatrix();*/
     //}
-    if ((g.nasteroids == 0) || (GameOver == true)) {
+    if (g.nasteroids == 0) {
     	r.bot = gl.yres/2;
     	r.left = gl.xres/2;
     	ggprint8b(&r, 16, 0x0041b9e1, "YOU WIN!");
-    renderGameOver();
-}
+    }else if(GameOver == true){ renderGameOver();
+    }
+
 	if (StartMenu){
 	    renderStartMenu();
 	    
