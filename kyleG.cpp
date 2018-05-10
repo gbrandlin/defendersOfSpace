@@ -1,6 +1,6 @@
 // Author: Kyle Gregory
-// Date-modified: 5/02/18
-// Purpose: Modifies parts of the ship and displays scores through html file.
+// Date-modified: 5/09/18
+// Purpose: Modifies ship collisions, displays game menu, and displays high scores.
 
 #include <iostream>
 using namespace std;
@@ -61,8 +61,6 @@ double testTime() {
     	timer += timeDiff(&ftimeStart, &ftimeEnd);
     	return timer;
 }
-//-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 // Send HighScore using HTTP
@@ -212,24 +210,23 @@ void sendScore() {
     free(ip);
     close(sock);
 }
-//-----------------------------------------------------------------------------
-
             
 //-----------------------------------------------------------------------------
 // SHIP modification
 //-----------------------------------------------------------------------------
-// Check for collision with window edge x.res 
-int ship_xboundary (double x,int xres) {
+
+// Check for collision with window edges at x.res
+int ship_xboundary (double x,int xres) { 
 	if (x < 0.0) {
 		return -1;
 	}
 	else if (x > xres) {
 		return 1;
-	}
+	} 
 	return 0;
 }
 
-// Check for collision with window edge y.res
+// Check for collision with window edges at y.res
 int ship_yboundary (double y,int yres) {
 	if (y < 0.0) {
 		return -1;
@@ -239,8 +236,6 @@ int ship_yboundary (double y,int yres) {
 	}
 	return 0;
 }
-//-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 // Bullet modification
@@ -261,13 +256,33 @@ int ship_yboundary (double y,int yres) {
 	}
 	return b;
 }*/
-//-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 // Game Menu
 //-----------------------------------------------------------------------------
-/*void displayMenu () {
+/*void showOptions(int xres, int yres) {
+    Rect r;
+    r.bot = yres / 3;
+    r.left = xres / 1.9;
+    ggprint8b(&r, 16, 0x00ff0000, "GAME MENU");
+    ggprint8b(&r, 16, 0x00ffff00, "C - Start game");
+    ggprint8b(&r, 16, 0x00ffff00, "UP Arrow - Move up");
+    ggprint8b(&r, 16, 0x00ffff00, "RIGHT Arrow - Move right");
+    ggprint8b(&r, 16, 0x00ffff00, "BOTTOM Arrow - Move down");
+    ggprint8b(&r, 16, 0x00ffff00, "LEFT Arrow - Move left");
+    ggprint8b(&r, 16, 0x00ffff00, "W - Spread shot");
+    ggprint8b(&r, 16, 0x00ffff00, "E - Charge beam");
+    ggprint8b(&r, 16, 0x00ffff00, "ESC - Exit game");
+}
+
+void showWinner(int xres, int yres) {
+    Rect r;
+    r.bot = yres/2;
+    r.left = xres/2;
+    ggprint8b(&r, 16, 0x0041b9e1, "YOU WIN!");
+}
+
+void displayMenu () {
 	static float angle = 0.0; // Static to keep value
 	glColor3ub(255,0,0);
 	// Matrix will read bottom top when multiple translate/rotates together
@@ -291,4 +306,3 @@ int ship_yboundary (double y,int yres) {
 	ggprint8b
 	glPopMatrix();
 }*/
-//-----------------------------------------------------------------------------
