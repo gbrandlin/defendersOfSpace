@@ -58,7 +58,6 @@ extern void timeCopy(struct timespec *dest, struct timespec *source);
 int playerScore = 0;
 int sentScores = 0;
 int labFunctions = 0;
-int showMenu = 1;
 int shipLives = 3;
 bool StartMenu = true;
 bool GameOver = false;
@@ -636,7 +635,6 @@ int check_keys(XEvent *e) {
 	case XK_Escape:
 	    return 1;
 	case XK_c:
-	    showMenu = 0;
 	    StartMenu = false;
 	    break;
 	case XK_k:
@@ -646,7 +644,7 @@ int check_keys(XEvent *e) {
 	    labFunctions = 1;
 	    break;
 	case XK_m:
-	    showMenu = 1;
+	    StartMenu = true;
 	    break;
 	case XK_s:
 	    playerScore = g.ndestroyed;
@@ -1325,7 +1323,6 @@ void drawShip() {
     }
 }
 
-// CHANGED
 void showBullet() {
     //Draw the bullets
     Bullet *b = &g.barr[0];
@@ -1429,8 +1426,6 @@ void render() {
 
     if (StartMenu) {
 	renderStartMenu();
-	if (showMenu == 1) {
-	    showOptions(gl.xres, gl.yres);
-	}
+	showOptions(gl.xres, gl.yres);
     }
 }
