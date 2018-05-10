@@ -35,10 +35,8 @@ void initSound(){
 
 int  bulletsound(){
 
-//#ifdef USE_SOUND
+    //#ifdef USE_SOUND
     initSound();
-
-
 
     ALuint bullBuff;
     bullBuff = alutCreateBufferFromFile("./laser.wav");
@@ -48,29 +46,22 @@ int  bulletsound(){
     alSourcef(bullSrc, AL_GAIN, 1.0f);
     alSourcef(bullSrc, AL_PITCH, 1.0f);
     alSourcei(bullSrc, AL_LOOPING, AL_FALSE);
+
     if (alGetError() != AL_NO_ERROR) {
 	printf("ERROR: setting source\n");
-
     }
+    
     alSourcePlay(bullSrc);
-    // alDeleteSources(1, &alSource);
-    //alDeleteBuffers(1, &alBuffer);
-    //ALCcontext *Context = alcGetCurrentContext();
-    //ALCdevice *Device = alcGetContextsDevice(Context);
-    //alcMakeContextCurrent(NULL);
-    //alcDestroyContext(Context);
-    //alcCloseDevice(Device);
-//#endif
+    
     return(0);
 
 }
+
+
+
 int startMenuSound(){
     //found in astroids.cpp main
-    //plays once becuase its called once?
-    //not sure might have to make more functions?
-    //when this is put in a render function it plays continuesly
-    //maybe the trick is not to call it in render...
-//#ifdef USE_SOUND
+    //#ifdef USE_SOUND
     initSound();
 
     ALuint menuSoundBuff;
@@ -80,49 +71,26 @@ int startMenuSound(){
     alSourcei(menuSoundSrc, AL_BUFFER, menuSoundBuff);
     alSourcef(menuSoundSrc, AL_GAIN, 0.6f);
     alSourcef(menuSoundSrc, AL_PITCH, 1.0f);
-    //WHEN SET TO TRUE plays for the entire game...
     alSourcei(menuSoundSrc, AL_LOOPING, AL_TRUE);
+    
     if (alGetError() != AL_NO_ERROR) {
 	printf("ERROR: setting source in gameStart\n");
-
     }
 
-    //for(int i=0; i<3; i++){
 
     alSourcePlay(menuSoundSrc);
     printf("startsoundplayed\n");
-    //usleep(20000);
-    // }
-    //alDeleteSources(1, &menuSoundSrc);
-    //alDeleteBuffers(1, &menuSoundBuff);
-    //ALCcontext *Context = alcGetCurrentContext();
-    //ALCdevice *Device = alcGetContextsDevice(Context);
-    //alcMakeContextCurrent(NULL);
-    //alcDestroyContext(Context);
-    //alcCloseDevice(Device);
-//#endif
+    
+    //#endif
     return(0);
 }
 
 
-/*
-   void endSound(){
-
-   alDeleteSources(1, &menuSoundSrc);
-   alDeleteBuffers(1, &menuBuffer);
-   ALCcontext *Context = alcGetCurrentContext();
-   ALCdevice *Device = alcGetContextsDevice(Context);
-   alcMakeContextCurrent(NULL);
-   alcDestroyContext(Context);
-   alcCloseDevice(Device);
-
-   }
-   */
 
 int explosion(){
     //found in astriods .cpp
     //void deleteAstriod line 808
-//#ifdef USE_SOUND
+    //#ifdef USE_SOUND
     initSound();
 
     ALuint exploBuff;
@@ -132,17 +100,14 @@ int explosion(){
     alSourcei(exploSrc, AL_BUFFER, exploBuff);
     alSourcef(exploSrc, AL_GAIN, 1.0f);
     alSourcef(exploSrc, AL_PITCH, 0.5f);
-    //WHEN SET TO TRUE plays for the entire game...
-        alSourcei(exploSrc, AL_LOOPING, AL_FALSE);
-            if (alGetError() != AL_NO_ERROR) {
-                    printf("ERROR: setting source in gameStart\n");
+    alSourcei(exploSrc, AL_LOOPING, AL_FALSE);
     
-                        }
-    
- alSourcePlay(exploSrc);
-     printf("explosionplayed\n");
-//#endif
-return(0);
+    if (alGetError() != AL_NO_ERROR) {
+	printf("ERROR: setting source in gameStart\n");
+    }
 
-
+    alSourcePlay(exploSrc);
+    printf("explosionplayed\n");
+    //#endif
+    return(0);
 }
