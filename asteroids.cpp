@@ -816,7 +816,15 @@ void physics() {
 	d1 = g.ship.pos[1] - a->pos[1];
 	dist = (d0*d0 + d1*d1);
 	// If ship collides with asteroid
-	if (dist < (a->radius*a->radius)) {
+	//PowerUp on
+	if (dist < (a->radius*a->radius) && Invinsibility) {
+	    shipLives = 10;
+	    if (shipLives > 0) {
+		GameOver = false;
+	    }
+	}
+	//PowerUp off
+	else if (dist < (a->radius*a->radius) && !Invinsibility) {
 	    shipLives = shipLives - 1 ;
 	    if (shipLives == 0) {
 		GameOver = true;
