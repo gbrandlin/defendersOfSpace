@@ -1225,28 +1225,6 @@ void Background() {
     glDisable(GL_ALPHA_TEST);
 }
 
-// Kyle
-void showOptions() {
-    Rect r;
-    r.bot = gl.yres / 3;
-    r.left = gl.xres / 1.9;
-    ggprint8b(&r, 16, 0x00ff0000, "Game Menu");
-    ggprint8b(&r, 16, 0x00ffff00, "c - Start game");
-    ggprint8b(&r, 16, 0x00ffff00, "up arrow key - Move up");
-    ggprint8b(&r, 16, 0x00ffff00, "right arrow key - Move right");
-    ggprint8b(&r, 16, 0x00ffff00, "bottom arrow key - Move down");
-    ggprint8b(&r, 16, 0x00ffff00, "left arrow key - Move left");
-    ggprint8b(&r, 16, 0x00ffff00, "esc - Exit game");
-}
-
-// Kyle
-void showWinner() {
-    Rect r;
-    r.bot = gl.yres/2;
-    r.left = gl.xres/2;
-    ggprint8b(&r, 16, 0x0041b9e1, "YOU WIN!");
-}
-
 void showScore() {
     Rect r;
     r.bot = gl.yres - 20;
@@ -1255,8 +1233,8 @@ void showScore() {
     ggprint8b(&r, 16, 0x00ff0000, "Defenders of Space");
     ggprint8b(&r, 16, 0x00ffff00, "n bullets: %i", g.nbullets);
     ggprint8b(&r, 16, 0x00ffff00, "n asteroids: %i", g.nasteroids);
-    ggprint8b(&r, 16, 0x00ffff00, "n asteroids destroyed: %i", g.ndestroyed);
-}    
+    ggprint8b(&r, 16, 0x00ffff00, "n asteroids destroyed: %i", g.ndestroyed);    
+}
 
 // Kasean
 void drawShip() {
@@ -1425,8 +1403,9 @@ void drawAsteroid() {
 }
 
 void render() {
-    Background();
 
+    Background();
+    
     extern void showNameKyle(int, int);
     extern void showNameHeri(int, int);
     if (labFunctions == 1) {
@@ -1438,9 +1417,12 @@ void render() {
     drawShip();
     showBullet();
     drawAsteroid();
+    showScore();
 
+    extern void showOptions(int, int);
+    extern void showWinner(int, int);
     if (g.nasteroids == 0) {
-	showWinner();
+	showWinner(gl.xres, gl.yres);
     } else if(GameOver == true) { 
 	renderGameOver();
     }
@@ -1448,7 +1430,7 @@ void render() {
     if (StartMenu) {
 	renderStartMenu();
 	if (showMenu == 1) {
-	    showOptions();
+	    showOptions(gl.xres, gl.yres);
 	}
     }
 }

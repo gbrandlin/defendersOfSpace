@@ -260,7 +260,7 @@ int ship_yboundary (double y,int yres) {
 //-----------------------------------------------------------------------------
 // Game Menu
 //-----------------------------------------------------------------------------
-/*void showOptions(int xres, int yres) {
+void showOptions(int xres, int yres) {
     Rect r;
     r.bot = yres / 3;
     r.left = xres / 1.9;
@@ -282,7 +282,7 @@ void showWinner(int xres, int yres) {
     ggprint8b(&r, 16, 0x0041b9e1, "YOU WIN!");
 }
 
-void displayMenu () {
+/*void displayMenu () {
 	static float angle = 0.0; // Static to keep value
 	glColor3ub(255,0,0);
 	// Matrix will read bottom top when multiple translate/rotates together
