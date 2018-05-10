@@ -64,6 +64,8 @@ bool StartMenu = true;
 bool GameOver = false;
 bool ChargedBeam = false;
 bool WavePowerUp = false;
+bool ThrustBoost = false;
+bool Invinsibility = false;
 
 class Image {
     public:
@@ -656,6 +658,10 @@ int check_keys(XEvent *e) {
 	case XK_e:
 	    ChargedBeam=!ChargedBeam;
 	    break;
+	case XK_t:
+	    ThrustBoost=!ThrustBoost;
+	case XK_i:
+	    Invinsibility=!Invinsibility;
     }
     return 0;
 
@@ -864,7 +870,8 @@ void physics() {
     }
 
     //check keys pressed now
-    if (gl.keys[XK_Left]) {
+    //if (gl.keys[XK_Left]) {
+    if (gl.keys[XK_Left] && ThrustBoost) {
 	//apply thrust
 	//convert ship angle to radians
 	Flt rad = ((g.ship.angle+180.0) / 360.0f) * PI * 2.0;
@@ -874,10 +881,24 @@ void physics() {
 	}
 	Flt xdir = cos(rad);
 	Flt ydir = sin(rad);
-	g.ship.vel[0] += xdir*0.1f;
-	g.ship.vel[1] += ydir*0.1f;
+	g.ship.vel[0] += xdir*0.20f;
+	g.ship.vel[1] += ydir*0.20f;
     }
-    if (gl.keys[XK_Right]) {
+    else if (gl.keys[XK_Left]){
+	//apply thrust
+	//convert ship angle to radians
+	Flt rad = ((g.ship.angle+180.0) / 360.0f) * PI * 2.0;
+	//convert angle to a vector
+	if (g.ship.vel[0] > 0) {
+	    g.ship.vel[0] = 0;
+	}
+	Flt xdir = cos(rad);
+	Flt ydir = sin(rad);
+	g.ship.vel[0] += xdir*0.10f;
+	g.ship.vel[1] += ydir*0.10f;
+    }
+    //if (gl.keys[XK_Right]) {
+    if (gl.keys[XK_Right] && ThrustBoost) {
 	//apply thrust
 	//convert ship angle to radians
 	Flt rad = ((g.ship.angle+0.0) / 360.0f) * PI * 2.0;
@@ -887,10 +908,38 @@ void physics() {
 	}
 	Flt xdir = cos(rad);
 	Flt ydir = sin(rad);
-	g.ship.vel[0] += xdir*0.1f;
-	g.ship.vel[1] += ydir*0.1f;
+	g.ship.vel[0] += xdir*0.20f;
+	g.ship.vel[1] += ydir*0.20f;
     }
-    if (gl.keys[XK_Up]) {
+    else if (gl.keys[XK_Right]) {
+	//apply thrust
+	//convert ship angle to radians
+	Flt rad = ((g.ship.angle+0.0) / 360.0f) * PI * 2.0;
+	//convert angle to a vector
+	if (g.ship.vel[0] < 0) {
+	    g.ship.vel[0] = 0;
+	}
+	Flt xdir = cos(rad);
+	Flt ydir = sin(rad);
+	g.ship.vel[0] += xdir*0.10f;
+	g.ship.vel[1] += ydir*0.10f;
+
+    }
+    //if (gl.keys[XK_Up]) {
+    if (gl.keys[XK_Up] && ThrustBoost) {
+	//apply thrust
+	//convert ship angle to radians
+	Flt rad = ((g.ship.angle+90.0) / 360.0f) * PI * 2.0;
+	//convert angle to a vector
+	if (g.ship.vel[1] < 0) {
+	    g.ship.vel[1] = 0;
+	}
+	Flt xdir = cos(rad);
+	Flt ydir = sin(rad);
+	g.ship.vel[0] += xdir*0.20f;
+	g.ship.vel[1] += ydir*0.20f;
+    }
+    else if (gl.keys[XK_Up]) {
 	//apply thrust
 	//convert ship angle to radians
 	Flt rad = ((g.ship.angle+90.0) / 360.0f) * PI * 2.0;
@@ -903,7 +952,21 @@ void physics() {
 	g.ship.vel[0] += xdir*0.10f;
 	g.ship.vel[1] += ydir*0.10f;
     }
-    if (gl.keys[XK_Down]) {
+    //if (gl.keys[XK_Down]) {
+    if (gl.keys[XK_Down] && ThrustBoost) {
+	//apply thrust
+	//convert ship angle to radians
+	Flt rad = ((g.ship.angle+270.0) / 360.0f) * PI * 2.0;
+	//convert angle to a vector
+	if (g.ship.vel[1] > 0) {
+	    g.ship.vel[1] = 0;
+	}
+	Flt xdir = cos(rad);
+	Flt ydir = sin(rad);
+	g.ship.vel[0] += xdir*0.20f;
+	g.ship.vel[1] += ydir*0.20f;
+    }
+    else if (gl.keys[XK_Down]) {
 	//apply thrust
 	//convert ship angle to radians
 	Flt rad = ((g.ship.angle+270.0) / 360.0f) * PI * 2.0;
@@ -1002,6 +1065,7 @@ void physics() {
 	}		 
     }
 
+    //if (g.mouseThrustOn) {
     if (g.mouseThrustOn) {
 	struct timespec mtt;
 	clock_gettime(CLOCK_REALTIME, &mtt);
@@ -1238,7 +1302,7 @@ void drawShip() {
     glBindTexture(GL_TEXTURE_2D, 0);
     glDisable(GL_ALPHA_TEST);
 
-    if (gl.keys[XK_Right]) {
+    if (ThrustBoost) {
 	//draw thrust
 	Flt rad = ((g.ship.angle) / 360.0f) * PI * 2.0;
 	//convert angle to a vector
@@ -1252,7 +1316,27 @@ void drawShip() {
 	    r = rnd()*40.0+40.0;
 	    xe = -xdir * r + rnd() * 18.0 - 9.0;
 	    ye = -ydir * r + rnd() * 18.0 - 9.0;
-	    glColor3f(rnd()*.3+.7, rnd()*.3+.7, 0);
+	    glColor3f(0, 255, 255);
+	    glVertex2f(g.ship.pos[0]+xs,g.ship.pos[1]+ys);
+	    glVertex2f(g.ship.pos[0]+xe,g.ship.pos[1]+ye);
+	}
+	glEnd();
+    }
+    if (gl.keys[XK_Right] && !ThrustBoost) {
+	//draw thrust
+	Flt rad = ((g.ship.angle) / 360.0f) * PI * 2.0;
+	//convert angle to a vector
+	Flt xdir = cos(rad);
+	Flt ydir = sin(rad);
+	Flt xs,ys,xe,ye,r;
+	glBegin(GL_LINES);
+	for (int i = 0; i < 16; i++) {
+	    xs = -xdir * 11.0f + rnd() * 4.0 - 2.0;
+	    ys = -ydir * 11.0f + rnd() * 4.0 - 2.0;
+	    r = rnd()*40.0+40.0;
+	    xe = -xdir * r + rnd() * 18.0 - 9.0;
+	    ye = -ydir * r + rnd() * 18.0 - 9.0;
+	    glColor3f(rnd()*.3+.7, 255, 0);
 	    glVertex2f(g.ship.pos[0]+xs,g.ship.pos[1]+ys);
 	    glVertex2f(g.ship.pos[0]+xe,g.ship.pos[1]+ye);
 	}
