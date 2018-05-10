@@ -891,8 +891,7 @@ void physics() {
 	Flt ydir = sin(rad);
 	g.ship.vel[0] += xdir*0.20f;
 	g.ship.vel[1] += ydir*0.20f;
-    }
-    else if (gl.keys[XK_Left]){
+    } else if (gl.keys[XK_Left]) {
 	//apply thrust
 	//convert ship angle to radians
 	Flt rad = ((g.ship.angle+180.0) / 360.0f) * PI * 2.0;
@@ -918,8 +917,7 @@ void physics() {
 	Flt ydir = sin(rad);
 	g.ship.vel[0] += xdir*0.20f;
 	g.ship.vel[1] += ydir*0.20f;
-    }
-    else if (gl.keys[XK_Right]) {
+    } else if (gl.keys[XK_Right]) {
 	//apply thrust
 	//convert ship angle to radians
 	Flt rad = ((g.ship.angle+0.0) / 360.0f) * PI * 2.0;
@@ -946,8 +944,7 @@ void physics() {
 	Flt ydir = sin(rad);
 	g.ship.vel[0] += xdir*0.20f;
 	g.ship.vel[1] += ydir*0.20f;
-    }
-    else if (gl.keys[XK_Up]) {
+    } else if (gl.keys[XK_Up]) {
 	//apply thrust
 	//convert ship angle to radians
 	Flt rad = ((g.ship.angle+90.0) / 360.0f) * PI * 2.0;
@@ -973,8 +970,7 @@ void physics() {
 	Flt ydir = sin(rad);
 	g.ship.vel[0] += xdir*0.20f;
 	g.ship.vel[1] += ydir*0.20f;
-    }
-    else if (gl.keys[XK_Down]) {
+    } else if (gl.keys[XK_Down]) {
 	//apply thrust
 	//convert ship angle to radians
 	Flt rad = ((g.ship.angle+270.0) / 360.0f) * PI * 2.0;
@@ -1082,7 +1078,6 @@ void physics() {
 	    g.mouseThrustOn = false;
 	}
     }
-
 }
 
 //Kasean
@@ -1364,7 +1359,7 @@ void showBullet() {
 	float twoPi = 2.0f * 3.14159f;
 
 	glBegin(GL_TRIANGLE_FAN);
-	for(int j = 0; j <= triangles; j++) { 
+	for (int j = 0; j <= triangles; j++) { 
 	    glVertex2f((b->pos[0]+b->radius * cos(j * twoPi / triangles)), 
 		    (b->pos[1]+b->radius * sin(j * twoPi / triangles)));
 	}
