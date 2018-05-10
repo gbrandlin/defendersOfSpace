@@ -1,5 +1,5 @@
 // Author: Kyle Gregory
-// Date-modified: 5/09/18
+// Date-modified: 5/10/18
 // Purpose: Modifies ship collisions, displays game menu, and displays high scores.
 
 #include <iostream>
@@ -105,23 +105,8 @@ char *get_ip(char const *host) {
 }
 
 char *build_get_query(char const *host, char const *page) {
-    //char *buf = (char*)malloc(sizeof(char)*(20));
-    //sprintf(buf, "%d", playerScore);
     char *query;
-    //char *playerscore = (char*)malloc(sizeof(char)*(2));
-    //char *browser = (char*)malloc(sizeof(char)*(8));
-    //playerscore = buf;
-    //*page = (char*)malloc(sizeof(char)*(60));
-    //page="www.cs.csub.edu/~kgregory/3350/defendersOfSpace/scoreBoard.php?param=";
-    //browser="firefox ";
     char const *getpage = page;
-    //char *getpage=(char*)malloc(sizeof(char)*(60));
- 
-    //strcpy(getpage, browser);
-    //strcat(getpage, page);
-    //strcat(getpage, playerscore);
-    //system(getpage);
-    
     char const *tpl = "GET /%s HTTP/1.0\r\nHost: %s\r\nUser-Agent: %s\r\n\r\n";
     if (getpage[0] == '/') {
         getpage = getpage + 1;
@@ -238,26 +223,6 @@ int ship_yboundary (double y,int yres) {
 }
 
 //-----------------------------------------------------------------------------
-// Bullet modification
-//-----------------------------------------------------------------------------
-// Check/delete for collision with window edge x.res
-/*double bullet_boundary (double x, double y, int b) {
-	if (x < 0.0) {
-		b--;
-	}
-	else if (x > 1250.0) {
-		b--;
-	}
-	else if (y < 0.0) {
-		b--;
-	}
-	else if (y > 900.0) {
-		b--;
-	}
-	return b;
-}*/
-
-//-----------------------------------------------------------------------------
 // Game Menu
 //-----------------------------------------------------------------------------
 void showOptions(int xres, int yres) {
@@ -282,15 +247,11 @@ void showWinner(int xres, int yres) {
     ggprint8b(&r, 16, 0x0041b9e1, "YOU WIN!");
 }
 
-/*void displayMenu () {
-	static float angle = 0.0; // Static to keep value
+/*void displayMenu (int xres, int yres) {
 	glColor3ub(255,0,0);
-	// Matrix will read bottom top when multiple translate/rotates together
 	glPushMatrix();
-	glTranslatef(x, y, 0.0);
-	glRotatef(angle, 0.0f, 0.0f, 1.0f);
+	glTranslatef(xres, yres, 0.0);
 	glTranslatef(-50.0, -50.0, 0.0); 
-	angle = angle + 2.5; //rotation speed
 	glBegin(GL_QUADS);
 		glVertex2i(0, 0); 	//bottom left
 		glVertex2i(0, 100); 	//top left 
@@ -303,6 +264,5 @@ void showWinner(int xres, int yres) {
 	r.left = 50;
 	r.center = 1;
 	ggprint8b(&r, 16, 0x00ffffff, "GAME MENU");
-	ggprint8b
 	glPopMatrix();
 }*/
